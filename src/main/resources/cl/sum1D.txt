@@ -1,0 +1,4 @@
+kernel void sum(global const float * restrict a, global const float * restrict b, global float *r) { 
+  unsigned int xid = get_global_id(0);
+  r[xid] = a[xid] + b[xid];
+}

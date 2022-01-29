@@ -1,0 +1,24 @@
+<html>
+Copyright (c) 2022 David Uselmann
+
+Resource Files
+
+package.html this file describes all files in this directory and other packages.
+log4j.properties is the logging configuration.
+
+demo/ contains resources from lwjgl demos.
+
+cl/ dir contains many OpenCL kernel files.
+	space-gravity.txt is the kernel for Space.java
+	colRows2D2D.txt and sum*.* files are OpenCL kernels for the simple demos.
+	gravity-cl*.* are used in (or are versions of) the advanced OpenCL demo files.
+	const.txt is used by the CLUtils to convert return codes to strings.
+	nvidiaNBody-cl.txt is an NVidia demo file that also implements gravity but not how I wanted.
+		I used this file to understand the nuance passing data to OpenCL kernels.
+		
+gl/ dir contains many OpenGL shader files.
+	space-points.* are shaders for the Space.java application.
+	gl4points.*    are shaders from my sandbox OpenGL testing.
+	points.* are some alternate shaders that I might use.
+
+</html>

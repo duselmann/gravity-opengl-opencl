@@ -1,0 +1,109 @@
+// Copyright (c) 2022 David Uselmann
+// NOTE: could #define a data type for float/double dynamically here
+// NOTE: Unfortunately AMD did not use the same double extension name as Intel and NVidia
+// NOTE: this is disabled for now
+#ifdef cl_khr_fp64s
+    // NOTE: this allows for double precision instead of float for non-AMD
+    #pragma OPENCL EXTENSION cl_khr_fp64 : enable
+#endif
+
+#ifdef cl_amd_fp64
+    // NOTE: this allows for double precision instead of float for AMD processor
+    #pragma OPENCL EXTENSION cl_amd_fp64 : enable
+#endif
+
+
+float3 attraction(float3 accumAccel, float3 body1, float mass, float3 body2) {
+    float3 r;
+
+    // because bodies have a mass, need to calculate individually
+    r.x = body1.x - body2.x;
+    r.y = body1.y - body2.y;
+    r.z = body1.z - body2.z;
+
+    float rSqrd = r.x*r.x + r.y*r.y + r.z*r.z;
+    // closest approach maybe closer like 9 maybe
+    if (rSqrd < 16) {
+        rSqrd = 16;
+    }
+
+    // invDistCube =1/rSqrd^(3/2)  [4 FLOPS (2 mul, 1 sqrt, 1 inv)]
+    // rsqrt is inverse/reciprocal square root
+    float invDist     = native_rsqrt((float)rSqrd);
+    float invDistCube = invDist * invDist * invDist;
+
+    // position information 4-vector x,y,z, and w as mass
+    // a = mass * invDist3Halves [1 FLOP]
+    float force = mass * invDistCube;
+
+    // a_i =  a_i + r_i * force [6 FLOPS]
+    accumAccel.x += r.x * force;
+    accumAccel.y += r.y * force;
+    accumAccel.z += r.z * force;
+
+    return accumAccel;
+}
+
+
+kernel void gravityDarkMatter(
+            global float*  positions,     // from GL vertexes double sized array of float3
+            global float4* velocities,    // velocity.w is mass only needs to be single sized
+            unsigned int   numBodies,     // 
+            float  dt,                    // iterative integration interval, not system clock sync
+            float4 dmCenter,              // Dark Matter center position, dmCenter.w is volume
+            float  dmMass                 // Dark Matter Mass
+            ) 
+{
+    // positions need two buffers, the updated and the origin, while velocities only needs one current value
+    unsigned int index     = get_global_id(0);      // 0 to < numBodies
+
+    float3 position        = (float3)(positions[index*3 +0],positions[index*3 +1],positions[index*3 +2]);    // fetch the current position/body for this kernel
+    float3 acceleration    = (float3)(0,0,0);        // init the acceleration for the body for this dt
+
+    for (unsigned int b = 0; b<numBodies; b++) {
+        if (b != index) { // self gravity
+            float3 position2 = (float3)(positions[b*3 +0],positions[b*3 +1],positions[b*3 +2]);    // fetch the current position/body for this kernel
+            acceleration = attraction(acceleration, position2, velocities[b].w, position);
+        }
+    }
+
+    //barrier(CLK_LOCAL_MEM_FENCE); // no fence necessary because new position buffer
+
+    // DARK MATTER
+    // distance the position is from the center of the dark matter
+    float  dmRadius   = distance((float3)(position.x,position.y,position.z), 
+                                 (float3)(dmCenter.x,dmCenter.y,dmCenter.z));
+           dmRadius   = dmRadius*dmRadius*dmRadius;
+           dmRadius   = (dmRadius<0) ?-dmRadius :dmRadius;
+    // dark matter attraction is a diffuse volume
+    float dmVolume = dmCenter.w;
+    if (dmRadius<dmVolume) {
+        dmMass *= dmRadius/dmVolume;
+    }
+
+    float3 dmToCenter = (float3)(dmCenter.x, dmCenter.y, dmCenter.z);
+    acceleration      = attraction(acceleration, dmToCenter, dmMass, position);
+
+	float4 velocity   = velocities[index]; // copy velocity into private fast memory
+
+    // update velocity with incremental acceleration
+    velocity.x += acceleration.x * dt;
+    velocity.y += acceleration.y * dt;
+    velocity.z += acceleration.z * dt;
+
+    // update position with current velocity
+    position.x += velocity.x * dt;
+    position.y += velocity.y * dt;
+    position.z += velocity.z * dt;
+
+    barrier(CLK_LOCAL_MEM_FENCE); // no fence necessary because new position buffer
+    // put local copies back into buffers
+    positions[index*3 +0] = position.x;
+    positions[index*3 +1] = position.y;
+    positions[index*3 +2] = position.z;
+    velocities[index]     = velocity;
+//    velocities[index].x   = velocity.x;
+//    velocities[index].y   = velocity.y;
+//    velocities[index].z   = velocity.z;
+//    velocities[index].w   = velocity.w;
+}

@@ -1,0 +1,156 @@
+// Copyright (c) 2022 David Uselmann
+//; NOTE: Unfortunately AMD did not use the same double extension name.
+//; NOTE: this allows for double precision instead of float for non-AMD
+#ifdef cl_khr_fp64s
+    #pragma OPENCL EXTENSION cl_khr_fp64 : enable
+    //; NOTE: could #define a data type for float/double dynamically here
+#endif
+//; NOTE: this allows for double precision instead of float for AMD processor
+#ifdef cl_amd_fp64
+    #pragma OPENCL EXTENSION cl_amd_fp64 : enable
+#endif
+
+
+float3 body2bodyAttract(float3 accumAccel, float4 body1, float4 body2) {
+    float3 r;
+
+    // because bodies have a mass, need to calculate individually
+    r.x = body1.x - body2.x;
+    r.y = body1.y - body2.y;
+    r.z = body1.z - body2.z;
+
+    float rSqrd = r.x*r.x + r.y*r.y + r.z*r.z;
+    // closest approach
+    if (rSqrd < 16) {
+        rSqrd = 16;
+    }
+
+    //; invDistCube =1/rSqrd^(3/2)  [4 FLOPS (2 mul, 1 sqrt, 1 inv)]
+    //; rsqrt is inverse/reciprocal square root
+    float invDist     = native_rsqrt((float)rSqrd);
+    float invDistCube = invDist * invDist * invDist;
+
+    //; position information 4-vector x,y,z, and w as mass
+    //; a = mass * invDist3Halves [1 FLOP]
+    float force = body1.w * invDistCube;
+
+    //; a_i =  a_i + force * r_ij [6 FLOPS]
+    accumAccel.x += r.x * force;
+    accumAccel.y += r.y * force;
+    accumAccel.z += r.z * force;
+
+    return accumAccel;
+}
+
+
+//; LOOP OVER ALL BODIES TO CALCULATE GRAVITATIONAL ATTRACTION
+float3 forAllBodies(unsigned int numBodies, float4* bodies, float4 body) {
+    float3 acceleration = (float3)(0,0,0);
+
+    for (unsigned int b = 0; b<numBodies;) {
+        acceleration = body2bodyAttract(acceleration, bodies[b++], body);
+        acceleration = body2bodyAttract(acceleration, bodies[b++], body);
+        acceleration = body2bodyAttract(acceleration, bodies[b++], body);
+        acceleration = body2bodyAttract(acceleration, bodies[b++], body);
+        acceleration = body2bodyAttract(acceleration, bodies[b++], body);
+        acceleration = body2bodyAttract(acceleration, bodies[b++], body);
+        acceleration = body2bodyAttract(acceleration, bodies[b++], body);
+        acceleration = body2bodyAttract(acceleration, bodies[b++], body);
+    }
+	return acceleration;
+}
+
+
+//; UPDATE ALL STATE BELOW
+void updateState( 
+            float3 acceleration,
+            float4 position,
+            float4* newPositions,
+            float4* newVelocities, //; velocity could be float3
+            float4* oldVelocities, //; velocity could be float3
+            unsigned int b,        //; body index
+            float dt)              //; iterative integration
+{
+    float3 velocity        = (float3)(oldVelocities[b].x,oldVelocities[b].y,oldVelocities[b].z);
+    velocity.x += acceleration.x * dt;
+    velocity.y += acceleration.y * dt;
+    velocity.z += acceleration.z * dt;
+
+    position.x += velocity.x * dt;
+    position.y += velocity.y * dt;
+    position.z += velocity.z * dt;
+
+    newPositions[b]  = position;
+    newVelocities[b] = (float4)(velocity.x,velocity.y,velocity.z,0);
+}
+
+
+kernel void gravity(
+            global float4* newPositions,
+            global float4* newVelocities, //; velocity could be float3
+            global float4* oldPositions,
+            global float4* oldVelocities, //; velocity could be float3
+            float dt)                     //; iterative integration
+{
+    unsigned int localCol  = get_local_id(0);                            // 0 to < localCols (256 usually)
+    unsigned int localRow  = get_local_id(1);                            // 1 usually
+    
+    unsigned int groupCol  = get_group_id(0);                            // 0 to number of threads
+    unsigned int groupRow  = get_group_id(1);                            // 1 usually
+    
+    unsigned int groupCols = get_num_groups(0);                          // 1 or numBodies / 256  (must be an integer)
+    unsigned int localCols = get_local_size(0);                          // usually max groups (numBodies if less)
+    unsigned int localRows = get_local_size(1);                          // 1 usually
+    
+    unsigned int index     = mul24(groupCol, localCols) + localCol;      // 0 to < numBodies
+    unsigned int numBodies = mul24(groupCols, localCols);
+
+    float4 position        = oldPositions[index];
+
+    float3 acceleration    = forAllBodies(numBodies, oldPositions, position);
+    barrier(CLK_LOCAL_MEM_FENCE);
+    updateState(acceleration, position, newPositions, newVelocities, oldVelocities, index, dt);
+}
+
+
+kernel void gravityDarkMatter(
+            global float4* newPositions,
+            global float4* newVelocities, //; velocity could be float3
+            global float4* oldPositions,
+            global float4* oldVelocities, //; velocity could be float3
+            float  dt,                    //; iterative integration
+            float4 dmCenter,              //; dmMass is dmCenter.w
+            float  dmRadius3              //; radius cubed as a volume
+            ) 
+{
+    unsigned int localCol  = get_local_id(0);                            // 0 to < localCols (256 usually)
+    unsigned int localRow  = get_local_id(1);                            // 1 usually
+    
+    unsigned int groupCol  = get_group_id(0);                            // 0 to < groupCols (4 for 1024 bodies)
+    unsigned int groupRow  = get_group_id(1);                            // 1 usually
+    
+    unsigned int groupCols = get_num_groups(0);                          // 1 or numBodies / 256  (must be an integer)
+    unsigned int localCols = get_local_size(0);                          // usually max groups (numBodies if less)
+    unsigned int localRows = get_local_size(1);                          // 1 usually
+    
+    unsigned int index     = mul24(groupCol, localCols) + localCol;      // 0 to < numBodies
+    unsigned int numBodies = groupCols * localCols;
+
+    float4 position        = oldPositions[index];
+
+    float3 acceleration    = forAllBodies(numBodies, oldPositions, position);
+    barrier(CLK_LOCAL_MEM_FENCE);
+
+    // DARK MATTER
+    float  dmRadius   = distance((float3)(position.x,position.y,position.z), 
+                                 (float3)(dmCenter.x,dmCenter.y,dmCenter.z));
+           dmRadius   = dmRadius*dmRadius*dmRadius;
+    float  dmMass     = dmCenter.w;
+    if (dmRadius<dmRadius3) {
+        dmMass *= dmRadius/dmRadius3;
+    }
+    float4 dmToCenter = (float4)(dmCenter.x, dmCenter.y, dmCenter.z, dmMass);
+    acceleration = body2bodyAttract(acceleration, dmToCenter, position);
+
+    updateState(acceleration, position, newPositions, newVelocities, oldVelocities, index, dt);
+}

@@ -1,0 +1,18 @@
+kernel void sum(global const float * restrict a, global const float * restrict b, global float *r) { 
+  
+  /** 
+   *  Explained element id values  
+   */
+  unsigned int col = get_global_id(0);
+  unsigned int row = get_global_id(1);
+  unsigned int col_per_row = get_global_size(0);
+  unsigned int xid = (row * col_per_row + col);
+  
+  /* NOTE: alternate single line element id calculation
+   *   unsigned int xid = get_global_id(1) * get_global_size(0) + get_global_id(0);
+   * NOTE: // c-style comments are not valid
+   * NOTE: the global size 0 was passed with the kernel call pointer buffer sizes
+   */
+   
+  r[xid] = a[xid] + b[xid];
+}

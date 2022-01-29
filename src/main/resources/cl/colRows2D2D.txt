@@ -1,0 +1,26 @@
+// Copyright (c) 2022 David Uselmann
+kernel void fillGrid(global float *result) { 
+  
+    unsigned int gCol  = get_global_id(0);
+    unsigned int gRow  = get_global_id(1);
+    unsigned int gCols = get_global_size(0);
+    unsigned int gRows = get_global_size(1);
+    
+    unsigned int lRow  = get_local_id(0);
+    unsigned int lCol  = get_local_id(1);
+    unsigned int lRows = get_local_size(0);
+    unsigned int lCols = get_local_size(1);
+    
+    unsigned int nCols = gCols * lCols;
+    unsigned int nRows = gRows * lRows;
+    
+    unsigned int c     = gCol * lCols + lCol;
+    unsigned int r     = gRow * lRows + lRow;
+    
+    unsigned int index = gRow * gCols + gCol;
+    
+    if (index < 512*4)
+        result[index] = gRow * 10000 + gCol;
+    else
+        result[0] = 9.9;
+}

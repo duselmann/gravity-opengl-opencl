@@ -1,0 +1,38 @@
+// Copyright (c) 2022 David Uselmann
+kernel void sum(global const float * restrict a, global const float * restrict b, global float *r) { 
+  
+  /* 
+   *  1st get global index IDs and then convert to the dimensional array
+   */
+  unsigned int col = get_global_id(0);
+  unsigned int row = get_global_id(1);
+  unsigned int col_per_row = get_global_size(0);
+  unsigned int xid = row * col_per_row + col;
+  
+  /*
+   * 2nd get the local workspace index IDs
+   */
+  unsigned int localCol = get_local_id(0);
+  unsigned int localRow = get_local_id(1);
+  
+  /*
+   * 3rd allocate local workspace index IDs
+   */
+  __local float localWorkA[2][2];
+  __local float localWorkB[2][2];
+
+  /*
+   * 4th assign the global values into local memory.
+   *     in this trivial example, there is no benefit of the local
+   */
+  localWorkA[localCol][localRow] = a[xid];
+  localWorkB[localCol][localRow] = b[xid];
+
+  /*
+   * 5th Ensure all threads have local values
+   *     again, only if shared this is critical to sync
+  barrier(CLK_LOCAL_MEM_FENCE);
+   */
+  
+  r[xid] = localWorkA[localCol][localRow] + localWorkB[localCol][localRow];
+}
