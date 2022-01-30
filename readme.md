@@ -1,10 +1,29 @@
-# Universe Simulation
+# Universe Simulation on GPU
 - A multi-million particle gravity simulation.
 - The main program is org.davu.app.Space.main
 - See each package.html for code details.
 - Currently only builds with Windows natives. (see TODOs)
 - Currently only works with Intel chipset. (see TODOs)
 - davu is short for David Uselmann
+
+#### Controls
+
+##### Space.main
+- ESC key    quit (also window x button)
+- W/A/S/D    moves forward,left,back,right (i.e. FPS)
+- R/F keys   (or shift+W/S) moves up,down 
+- Q/E keys   rolls CCW/CC
+- Ctrl+3     toggles 3D glasses mode.
+- Ctrl+D+up/down arrows   adjusts 3D glasses separation.
+- Ctrl+A+up/down arrows   adjusts particle alpha value.
+- Ctrl+T+up/down arrows   adjusts time step.
+- Left  mouse button   looks in that direction.
+- Right mouse button   increase speed much faster.
+- Letting go of all controls reduces speed.
+
+##### opencl.advanced classes
+- Click and drag to move the simulation in the window
+- Mouse roller or touchpad two-finger scroll to zoom in/out
 
 #### Purpose
 - To make a million (or more) particle engine. Check.
@@ -40,7 +59,7 @@
 - JOML   - Linear algebra math framework.
 
 ### TODOs
-S
+
 ##### Architecture detecting pom.xml
 - The current pom.xml is only configured for Windows natives.
 - When I used this OS detecting pom, it pulled down all native jars.
@@ -56,16 +75,47 @@ S
 - See org.davu.app.space.OpenCL.java line 57 for OpenCL GPU assignment.
 
 ##### Factory for initial condition instances.
-- org.davu.app.Space#44 has a new instance of the scenario in use.
+- org.davu.app.space.Space#44 has a new instance of the scenario in use.
 - I need to construct a factory to control that scenario instantiated.
 - For now, the instance name can be replaced with any subclass of Particles.
 
 ##### Maybe change package.html
-- Thinking I might rather they be readme.md files.
+- Thinking I might rather they be readme.md files for github display.
 
 ##### Maybe add some sound
 - The pom has openal jar dependency for when I get around to implementing some sound.
 
-#### Special Note
-- Newtonian gravity is normalizable. The distances and masses are relative.
+##### Special Note
+- Newtonian gravity is normalizable. The distances and masses are relative magnitude numbers.
 - This could be a natural range if Newton's Constant and actual kg, m, sec initial conditions are used.
+
+
+### All Other main methods
+
+    java -cp target/gravity.jar org.davu.opencl.simple.TestInfo
+    java -cp target/gravity.jar org.davu.opencl.simple.Test1D
+    java -cp target/gravity.jar org.davu.opencl.simple.Test1Dvector
+    java -cp target/gravity.jar org.davu.opencl.simple.Test2D
+    java -cp target/gravity.jar org.davu.opencl.simple.Test2D2D
+    java -cp target/gravity.jar org.davu.opencl.simple.TestR2D2D
+    
+    java -cp target/gravity.jar org.davu.opencl.advanced.Explosive
+    java -cp target/gravity.jar org.davu.opencl.advanced.Explosive2
+    java -cp target/gravity.jar org.davu.opencl.advanced.Galaxies
+    java -cp target/gravity.jar org.davu.opencl.advanced.Galaxies2
+    java -cp target/gravity.jar org.davu.opencl.advanced.GalaxiesDarkMatter
+    java -cp target/gravity.jar org.davu.opencl.advanced.GalaxiesDarkMatterVar
+    java -cp target/gravity.jar org.davu.opencl.advanced.GalaxyArms
+    java -cp target/gravity.jar org.davu.opencl.advanced.Globular3D
+    java -cp target/gravity.jar org.davu.opencl.advanced.Gravity
+    java -cp target/gravity.jar org.davu.opencl.advanced.Helix
+    java -cp target/gravity.jar org.davu.opencl.advanced.Helix2
+    java -cp target/gravity.jar org.davu.opencl.advanced.Orbitally
+    java -cp target/gravity.jar org.davu.opencl.advanced.Saturn
+    java -cp target/gravity.jar org.davu.opencl.advanced.SaturnClose
+    java -cp target/gravity.jar org.davu.opencl.advanced.SaturnSpiral
+    java -cp target/gravity.jar org.davu.opencl.advanced.SolarSystem
+    java -cp target/gravity.jar org.davu.opencl.advanced.SolarSpeedy
+    java -cp target/gravity.jar org.davu.opencl.advanced.Universe
+    java -cp target/gravity.jar org.davu.opencl.advanced.Universe2
+
