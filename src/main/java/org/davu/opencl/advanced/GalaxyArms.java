@@ -1,3 +1,4 @@
+// Copyright (c) 2022 David Uselmann
 package org.davu.opencl.advanced;
 
 public class GalaxyArms extends Galaxies {

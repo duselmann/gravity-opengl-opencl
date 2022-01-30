@@ -1,3 +1,4 @@
+// Copyright (c) 2022 David Uselmann
 package org.davu.app.space.scenarios;
 
 import java.nio.FloatBuffer;
