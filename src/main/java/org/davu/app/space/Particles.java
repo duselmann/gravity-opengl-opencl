@@ -42,8 +42,7 @@ public class Particles {
 	private int numParticles;
 	private int massiveCount;
 
-    private final int[] vertexArray;
-    private final int[] vertexBuffer;
+    private int vertexBuffer;
 
 	private final FloatBuffer matrixBuffer;
 
@@ -65,9 +64,6 @@ public class Particles {
 		log.info("Creating particles");
 
 		this.glasses3D = glasses3D;
-
-	    vertexArray     = new int[1];
-	    vertexBuffer    = new int[1];
 
 		numParticles    = NumParticles;
 
@@ -102,13 +98,13 @@ public class Particles {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE/* _MINUS_SRC_ALPHA */); // the minus requires depth sorting
 	    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 	    glEnable(GL_POINT_SPRITE);
-	    glBindVertexArray(vertexArray[0]);
 
 	    glasses3D.render(electricBlue(), mvpMatrix, this::particleRender);
 	}
 
 	protected void particleRender(FloatBuffer colorBuffer, Matrix4f mvpMatrix) {
-	    glUniformMatrix4fv(mvp16Uniform, false, mvpMatrix.get(matrixBuffer));
+		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer); // set the GL buffer object handle active for data
+		glUniformMatrix4fv(mvp16Uniform, false, mvpMatrix.get(matrixBuffer));
 		glUniform4fv(colorUniform, colorBuffer);  // for 3D glasses need green render also
 	    glUniform1f(alphaUniform, alpha);  // for 3D glasses need green render also
 	    glDrawArrays(GL_POINTS, 0, numParticles);
@@ -118,29 +114,16 @@ public class Particles {
 		log.info("binding particle data GL");
 		// all the vertex GL handles
 
-		bind(vertices,  vertexArray, vertexBuffer);
+		vertexBuffer = glGenBuffers();        // get a GL buffer object handle
+	    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer); // set the GL buffer object handle active for data
+	    glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW); // load the vertex data into the GPU buffer
 
 	    glFinish();
-	    glFlush();
     }
-
-	protected void bind(float[] vertices, int[] vertexArrayObj, int[] vertexBufferObj) {
-		log.info("binding particle data GL");
-
-	    // Bind the Vertex Array Object then bind and set vertex buffer(s) and attribute pointer(s).
-	    glGenVertexArrays(vertexArrayObj);    // get a GL array object handle
-	    glBindVertexArray(vertexArrayObj[0]); // set a GL array object handle active for data buffers
-
-	    glGenBuffers(vertexBufferObj);        // get a GL buffer object handle
-	    glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObj[0]); // set the GL buffer object handle active for data
-	    glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW); // load the vertex data into the GPU buffer
-	    // static draw for a demo but dynamic for animated or motion
-	}
 
 	public void cleanup() {
 		log.info("dispose - particles");
-        quiteFree("glDeleteVertexArrays VAO", ()->glDeleteVertexArrays(vertexArray[0]));
-        quiteFree("glDeleteBuffers VBO", ()->glDeleteBuffers(vertexBuffer[0]));
+        quiteFree("glDeleteBuffers VBO", ()->glDeleteBuffers(vertexBuffer));
         quiteFree("glDeleteProgram", ()->glDeleteProgram(program));
         quiteFree("glDeleteShader vertex", ()->glDeleteShader(vertexShader));
         quiteFree("glDeleteShader fragment", ()->glDeleteShader(fragmentShader));
@@ -163,7 +146,7 @@ public class Particles {
 	}
 
 	public int getVertexBuffer() {
-		return vertexBuffer[0];
+		return vertexBuffer;
 	}
 	public int getTooCloseCount() {
 		return tooCloseCount;
