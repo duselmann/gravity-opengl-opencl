@@ -16,8 +16,10 @@ import java.nio.IntBuffer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Vector3d;
+import org.joml.Vector3f;
 import org.joml.Vector4d;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
@@ -35,6 +37,7 @@ public class Compass {
 	private int vertexShader;
 	private int fragmentShader;
 
+    private int vertexArray;
     private int vertexBuffer;
 
 	private final FloatBuffer matrixBuffer;
@@ -59,91 +62,87 @@ public class Compass {
 		alpha = 1f;
 	}
 	public void createProgram() throws IOException {
-		program = Particles.program;
+//		program = Particles.program;
+		log.info("Creating particles program");
+
+        vertexShader = Shader.createShader("gl/space-points.vs", GL_VERTEX_SHADER);
+        fragmentShader = Shader.createShader("gl/space-points.fs", GL_FRAGMENT_SHADER);
+        program = Shader.createProgram(vertexShader, fragmentShader);
+
+        glUseProgram(program);
+        mvp16Uniform = glGetUniformLocation(program, "mvp");
+        colorUniform = glGetUniformLocation(program, "color3D");
+        alphaUniform = glGetUniformLocation(program, "alpha");
+
+        glUseProgram(0);
 	}
 
-//	public void createProgram() throws IOException {
-//		log.info("Creating particles program");
-//
-//        vertexShader = Shader.createShader("gl/space-points.vs", GL_VERTEX_SHADER);
-//        fragmentShader = Shader.createShader("gl/space-points.fs", GL_FRAGMENT_SHADER);
-//        program = Shader.createProgram(vertexShader, fragmentShader);
-//        glUseProgram(program);
-//
-//        mvp16Uniform = glGetUniformLocation(program, "mvp");
-//        colorUniform = glGetUniformLocation(program, "color3D");
-//        alphaUniform = glGetUniformLocation(program, "alpha");
-//        glUseProgram(0);
-//    }
-
-	public void draw(Matrix4f proj, Matrix4f view) {
+	public void draw(Matrix4f proj, Matrix4f view, Vector3f trans) {
 	    glUseProgram(program);
 	    glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE/* _MINUS_SRC_ALPHA */); // the minus requires depth sorting
-	    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
-	    glEnable(GL_LINE_WIDTH);
-//	    glLineWidth(10f);
-//	    glBindVertexArray(vertexArray[0]);
-//	    glEnableVertexAttribArray(0);
-//	    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer[0]);
-	    glVertexAttribPointer(0, 0, GL_FLOAT, false, 0, 0); // 3x4 is 4 xyz points
+	    glShadeModel(GL_SMOOTH);
+	    glEnable(GL_POINT_SMOOTH);
+	    glEnable(GL_LINE_SMOOTH);
+//	    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+//	    glEnable(GL_POINT_SIZE);
+	    glLineWidth(1f);
+//	    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	    glBindVertexArray(vertexArray);
 
-//        glVertexAttribPointer(0,2,true,0,vertexBuffer[0]);
-//            0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-//            2,                  // size
-//            GL_FLOAT,           // type
-//            GL_FALSE,           // normalized?
-//            0,                  // stride
-//            (void*)0            // array buffer offset
-//        );
+	    Vector3f inv = new Vector3f();
 ////	    Matrix4f mvpMatrix = compass.set(view)
 ////	        	.m30(0).m31(-2).m32(-3);
-	    Matrix4f mvpMatrix = compass.set(view)
-	        	.mul(proj);
-////	        	.m30(0).m31(-2).m32(-3);
-
+	    Matrix4f mvpMatrix = compass //.setPerspective(Math.toRadians(90.0f), 1.5f, 0.1f, 200.0f)
+	    		.set(proj)
+//	    		.set(view)
+//	        	.mul(proj)
+	        	.mul(view)
+//	        	.translate(trans.mul(-1, inv))
+	        	.setTranslation(0, -500, -300)
+//	        	.m30(0).m31(-500).m32(-300)
+	        	.m33(700)
+	    		;
+//	    System.out.println(mvpMatrix);
 	    glasses3D.render(red(), mvpMatrix, (c,m)->{
-	    	System.err.println("foo");
+//	    	System.err.println("foo");
 	    	particleRender(0,c,m);
 	    });
-//	    glasses3D.render(green(), mvpMatrix, (c,m)->{particleRender(2,c,m);});
-//	    glasses3D.render(blue(), mvpMatrix, (c,m)->{particleRender(4,c,m);});
+	    glasses3D.render(green(), mvpMatrix, (c,m)->{particleRender(2,c,m);});
+	    glasses3D.render(blue(), mvpMatrix, (c,m)->{particleRender(4,c,m);});
+//	    glBindBuffer(GL_ARRAY_BUFFER, 0);
+	    glBindVertexArray(0);
 	}
 
 	protected void particleRender(int idx, FloatBuffer colorBuffer, Matrix4f mvpMatrix) {
-		System.err.println("bar");
+//		System.err.println("bar");
+//		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer); // set the GL buffer object handle active for data
 	    glUniformMatrix4fv(mvp16Uniform, false, mvpMatrix.get(matrixBuffer));
 		glUniform4fv(colorUniform, colorBuffer);  // for 3D glasses need green render also
 	    glUniform1f(alphaUniform, alpha);  // for 3D glasses need green render also
-	    glDrawArrays(GL_LINE, 0, 6);
+	    glDrawArrays(GL_LINE_STRIP, idx, 2);
 	}
 
     public void bind() {
 		log.info("binding particle data GL");
 		// all the vertex GL handles
 
-		bind(vertices);
-
-	    glFinish();
-	    glFlush();
-    }
-
-	protected void bind(float[] vertices) {
-		log.info("binding particle data GL");
-
-	    // Bind the Vertex Array Object then bind and set vertex buffer(s) and attribute pointer(s).
-//	    glGenVertexArrays(vertexArrayObj);    // get a GL array object handle
-//	    glBindVertexArray(vertexArrayObj[0]); // set a GL array object handle active for data buffers
+		vertexArray = glGenVertexArrays();
+		glBindVertexArray(vertexArray);
 
 	    this.vertexBuffer = glGenBuffers();   // get a GL buffer object handle
 	    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer); // set the GL buffer object handle active for data
 	    glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW); // load the vertex data into the GPU buffer
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-	}
+
+	    int positionLocation = glGetAttribLocation(program, "position");
+	    glEnableVertexAttribArray(positionLocation);
+	    glVertexAttribPointer(positionLocation,3, GL_FLOAT, false, 0, 0);
+    }
+
 
 	public void cleanup() {
 		log.info("dispose - particles");
-//        quiteFree("glDeleteVertexArrays VAO", ()->glDeleteVertexArrays(vertexArray[0]));
+        quiteFree("glDeleteBuffers VAO", ()->glDeleteVertexArrays(vertexArray));
         quiteFree("glDeleteBuffers VBO", ()->glDeleteBuffers(vertexBuffer));
         quiteFree("glDeleteProgram", ()->glDeleteProgram(program));
         quiteFree("glDeleteShader vertex", ()->glDeleteShader(vertexShader));

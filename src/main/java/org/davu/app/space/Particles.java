@@ -43,6 +43,7 @@ public class Particles {
 	private int numParticles;
 	private int massiveCount;
 
+    private int vertexArray;
     private int vertexBuffer;
 
 	private final FloatBuffer matrixBuffer;
@@ -95,36 +96,40 @@ public class Particles {
 
 	public void draw(Matrix4f mvpMatrix) {
 	    glUseProgram(program);
-	    glDepthMask(false);
-	    glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE/* _MINUS_SRC_ALPHA */); // the minus requires depth sorting
-	    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
-	    glEnable(GL_POINT_SPRITE);
+//		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer); // set the GL buffer object handle active for data
+//        glVertexPointer(3, GL_FLOAT, 0, 0);
+	    glBindVertexArray(vertexArray);
 
 	    glasses3D.render(electricBlue(), mvpMatrix, this::particleRender);
+//        glBindBuffer(GL_ARRAY_BUFFER, 0);
+	    glBindVertexArray(0);
 	}
 
 	protected void particleRender(FloatBuffer colorBuffer, Matrix4f mvpMatrix) {
-		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer); // set the GL buffer object handle active for data
 		glUniformMatrix4fv(mvp16Uniform, false, mvpMatrix.get(matrixBuffer));
 		glUniform4fv(colorUniform, colorBuffer);  // for 3D glasses need green render also
 	    glUniform1f(alphaUniform, alpha);  // for 3D glasses need green render also
 	    glDrawArrays(GL_POINTS, 0, numParticles);
 	}
 
-    public void bind(float[] vertices) {
+    public void bind() {
 		log.info("binding particle data GL");
 		// all the vertex GL handles
+		vertexArray = glGenVertexArrays();
+		glBindVertexArray(vertexArray);
 
 		vertexBuffer = glGenBuffers();        // get a GL buffer object handle
 	    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer); // set the GL buffer object handle active for data
 	    glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW); // load the vertex data into the GPU buffer
 
-	    glFinish();
+	    int positionLocation = glGetAttribLocation(program, "position");
+	    glEnableVertexAttribArray(positionLocation);
+	    glVertexAttribPointer(positionLocation,3, GL_FLOAT, false, 0, 0);
     }
 
 	public void cleanup() {
 		log.info("dispose - particles");
+        quiteFree("glDeleteBuffers VAO", ()->glDeleteVertexArrays(vertexArray));
         quiteFree("glDeleteBuffers VBO", ()->glDeleteBuffers(vertexBuffer));
         quiteFree("glDeleteProgram", ()->glDeleteProgram(program));
         quiteFree("glDeleteShader vertex", ()->glDeleteShader(vertexShader));
@@ -135,8 +140,14 @@ public class Particles {
 		log.info("init - particles");
 		// vertexes, once passed to GL, are no longer needed in Java
 		vertices = makeVertices();
-        bind(vertices);
+        bind();
         createProgram();
+
+	    glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE/* _MINUS_SRC_ALPHA */); // the minus requires depth sorting
+	    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+	    glEnable(GL_POINT_SPRITE);
+
         return this;
 	}
 

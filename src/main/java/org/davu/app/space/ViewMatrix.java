@@ -45,6 +45,7 @@ public class ViewMatrix {
 	private Matrix4f viewProjection  = new Matrix4f();
 	private Matrix4f projection      = new Matrix4f();
 	private Matrix4f viewMatrix      = new Matrix4f().identity();
+	private Matrix4f orientMatrix    = new Matrix4f().identity();
 
 	private final float impulseMag   = 300f;
 	private final float maxSpeed     = 3000.0f;
@@ -159,7 +160,13 @@ public class ViewMatrix {
 	public Matrix4f getViewMatrix() {
 		return viewMatrix;
 	}
+	public Matrix4f getOrientation() {
+		return orientMatrix.set(orientation);
+	}
 	public Matrix4f getViewProjection() {
 		return viewProjection;
+	}
+	public Vector3f getDisplacement() {
+		return displacement;
 	}
 }

@@ -77,7 +77,7 @@ public class Space implements Runnable {
 	    glClearColor(0f, 0f, 0f, 1.0f);
 	    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	    particles.draw(view.getViewProjection());
-//        compass.draw(view.getProjection(), view.getViewMatrix());
+        compass.draw(view.getProjection(), view.getViewMatrix(), view.getDisplacement());
 	}
 
 	private void loop() {
@@ -94,13 +94,13 @@ public class Space implements Runnable {
 	public void run() {
 	    try {
 	        initGL();
-	        initCL();
-	        initComputeThread();
+//	        initCL();
+//	        initComputeThread();
 	        loop();
 	    } catch (Throwable t) {
 	        t.printStackTrace();
 	    } finally {
-	    	gravity.cleanup();
+//	    	gravity.cleanup();
 	        debug.cleanup();
 	        particles.cleanup();
 	        window.cleanup();
