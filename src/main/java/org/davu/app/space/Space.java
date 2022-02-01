@@ -46,8 +46,7 @@ public class Space implements Runnable {
 
         debug = new DebugUtils().init();
 
-        // Tell GL how the vertex array is "structured"
-	    glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * 4, 0); // 3x4 is 4 xyz points
+	    glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
 	    glEnableVertexAttribArray(0);
 	    // Note that this is allowed, the call to glVertexAttribPointer registered VBO
 	    // as the currently bound vertex buffer object so afterwards we can safely unbind
