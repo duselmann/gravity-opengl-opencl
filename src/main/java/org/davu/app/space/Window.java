@@ -49,7 +49,7 @@ public class Window {
             throw new AssertionError("Failed to create the GLFW window");
         }
 	    glfwMakeContextCurrent(window);
-        glfwSwapInterval(1);
+        glfwSwapInterval(1); // vsync, could be zero, need to find out what it is for vsync
         glfwShowWindow(window);
 
         IntBuffer framebufferSize = BufferUtils.createIntBuffer(2);

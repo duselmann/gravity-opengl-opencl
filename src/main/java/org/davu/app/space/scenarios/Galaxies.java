@@ -16,7 +16,7 @@ public class Galaxies extends Particles {
 	private static final Logger log = LogManager.getLogger(Galaxies.class);
 
 	protected float coreMassBase  = 5e3f;
-    protected int NumParticles = 1_048_576*2;
+    protected int NumParticles = 65_536;//1_048_576*2;
 	protected FloatBuffer velBuffer;
 	protected float[] coreMass;
 	protected float[] maxRadius;

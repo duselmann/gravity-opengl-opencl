@@ -5,6 +5,7 @@ import static org.davu.app.space.ColorsGL.*;
 import static org.davu.app.space.Utils.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 
 import java.io.IOException;
@@ -32,7 +33,7 @@ public class Particles {
     protected  float velBase  = 7f;
 
 	// program and arguments
-	private int program;
+	public static int program;
 	private int mvp16Uniform;
 	private int colorUniform;
 	private int alphaUniform;
@@ -78,7 +79,7 @@ public class Particles {
 		initDarkMater();
 	}
 
-	public void createParticleProgram() throws IOException {
+	public void createProgram() throws IOException {
 		log.info("Creating particles program");
 
         vertexShader = Shader.createShader("gl/space-points.vs", GL_VERTEX_SHADER);
@@ -94,6 +95,7 @@ public class Particles {
 
 	public void draw(Matrix4f mvpMatrix) {
 	    glUseProgram(program);
+	    glDepthMask(false);
 	    glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE/* _MINUS_SRC_ALPHA */); // the minus requires depth sorting
 	    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
@@ -134,7 +136,7 @@ public class Particles {
 		// vertexes, once passed to GL, are no longer needed in Java
 		vertices = makeVertices();
         bind(vertices);
-        createParticleProgram();
+        createProgram();
         return this;
 	}
 

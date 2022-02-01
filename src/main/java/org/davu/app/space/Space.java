@@ -1,6 +1,8 @@
 // Copyright (c) 2022 David Uselmann
 package org.davu.app.space;
 
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 import static org.davu.app.space.Utils.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -15,7 +17,7 @@ import java.io.IOException;
 public class Space implements Runnable {
 	private long lastTime = System.nanoTime();
 
-	private Guides guides;
+	private Compass compass;
 	private Window window;
 	private Controls controls;
 	private Particles particles;
@@ -32,8 +34,6 @@ public class Space implements Runnable {
 
         window = new Window().init();
         view = new ViewMatrix(window.getWidth(), window.getHeight());
-        glasses3d = new Glasses3D(view);
-        guides = new Guides(glasses3d);
 
         GLCapabilities caps = GL.createCapabilities(); // connects lwjgl to the native libraries
         if (!caps.OpenGL30) {
@@ -41,13 +41,15 @@ public class Space implements Runnable {
         }
 
         // TODO factory pattern like mechanism to select the initial conditions
+        glasses3d = new Glasses3D(view);
         particles = new Galaxies2b(glasses3d).init();
-        controls = new Controls(window, view, particles, glasses3d);
+        compass   = new Compass(glasses3d).init();
+        controls  = new Controls(window, view, particles, glasses3d);
 
-        debug = new DebugUtils().init();
+        debug     = new DebugUtils().init();
 
-	    glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
 	    glEnableVertexAttribArray(0);
+	    glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
 	    // Note that this is allowed, the call to glVertexAttribPointer registered VBO
 	    // as the currently bound vertex buffer object so afterwards we can safely unbind
 	    glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -75,7 +77,7 @@ public class Space implements Runnable {
 	    glClearColor(0f, 0f, 0f, 1.0f);
 	    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	    particles.draw(view.getViewProjection());
-        guides.draw(view.getProjection(), view.getViewMatrix());
+//        compass.draw(view.getProjection(), view.getViewMatrix());
 	}
 
 	private void loop() {
