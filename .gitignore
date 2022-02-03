@@ -1,2 +1,4 @@
 target/
 .settings/
+/.idea/
+dependency-reduced-pom.xml
