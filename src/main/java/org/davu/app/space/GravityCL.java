@@ -53,11 +53,10 @@ public class GravityCL {
 		openCl = new OpenCL(filePath, function);
 
 		this.particles = particles;
-    	setNumBodies(particles.getNumPartices());
-    	// TODO get GL particles
-
-    	this.glWindow = glWindow;
+    	setNumBodies(particles.getParticleCount());
     	this.glParticles = particles.getVertexBuffer();
+    	this.glWindow = glWindow;
+
     	clResult = BufferUtils.createIntBuffer(1);
 	}
 
@@ -99,7 +98,7 @@ public class GravityCL {
     	positionMem = clCreateFromGLBuffer(openCl.getContext(), CL_MEM_READ_WRITE, glParticles, clResult);
     	isSuccess(clResult);
 
-    	velBuffer = particles.initVelocities();
+    	velBuffer = particles.getVelocities();
     	velocityMem = writeBuffer(queue, openCl.getContext(), CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, velBuffer);
 	}
 

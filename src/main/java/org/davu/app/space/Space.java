@@ -1,9 +1,6 @@
 // Copyright (c) 2022 David Uselmann
 package org.davu.app.space;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL30.*;
 import static org.davu.app.space.Utils.*;
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -17,13 +14,13 @@ import java.io.IOException;
 public class Space implements Runnable {
 	private long lastTime = System.nanoTime();
 
-	private Compass compass;
 	private Window window;
 	private Controls controls;
-	private Particles particles;
 	private ViewMatrix view;
 	private DebugUtils debug;
 	private Glasses3D glasses3d;
+	private VaoVboManager vertexManager;
+	private Particles particles;
 
     GravityCL gravity;
 
@@ -42,20 +39,14 @@ public class Space implements Runnable {
 
         // TODO factory pattern like mechanism to select the initial conditions
         glasses3d = new Glasses3D(view);
-        particles = new Galaxies2b(glasses3d).init();
-        compass   = new Compass(glasses3d).init();
+        vertexManager = new VaoVboManager();
+        particles = new Galaxies2b(glasses3d);
+        vertexManager.register(particles);
+        vertexManager.register(new Compass(glasses3d));
+        vertexManager.init();
         controls  = new Controls(window, view, particles, glasses3d);
 
         debug     = new DebugUtils().init();
-
-	    glEnableVertexAttribArray(0);
-	    glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
-	    // Note that this is allowed, the call to glVertexAttribPointer registered VBO
-	    // as the currently bound vertex buffer object so afterwards we can safely unbind
-	    glBindBuffer(GL_ARRAY_BUFFER, 0);
-	    // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs),
-	    // remember: do NOT unbind the EBO, keep it bound to this VAO
-	    glBindVertexArray(0);
 	}
 
 	private void initCL() throws IOException {
@@ -74,10 +65,11 @@ public class Space implements Runnable {
 	}
 
 	private void render() {
-	    glClearColor(0f, 0f, 0f, 1.0f);
-	    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	    particles.draw(view.getViewProjection());
-        compass.draw(view.getProjection(), view.getViewMatrix(), view.getDisplacement());
+		window.clearGL();
+		// order here does not matter for compass
+		// init order matters
+		// mvpm is same for particles either w or w/o compass init
+		vertexManager.draw(view.getViewProjection());
 	}
 
 	private void loop() {
@@ -94,15 +86,15 @@ public class Space implements Runnable {
 	public void run() {
 	    try {
 	        initGL();
-//	        initCL();
-//	        initComputeThread();
+	        initCL();
+	        initComputeThread();
 	        loop();
 	    } catch (Throwable t) {
 	        t.printStackTrace();
 	    } finally {
-//	    	gravity.cleanup();
+	    	gravity.cleanup();
 	        debug.cleanup();
-	        particles.cleanup();
+	    	vertexManager.cleanup();
 	        window.cleanup();
 	    	quiteFree("glfwTerminate", ()->glfwTerminate());
 	    }

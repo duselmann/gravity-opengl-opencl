@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.davu.app.space.Glasses3D;
 import org.davu.app.space.Particles;
+import org.davu.app.space.VaoVboManager;
 import org.joml.Math;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
@@ -16,7 +17,6 @@ public class Orbitally extends Particles {
 	private static final Logger log = LogManager.getLogger(Orbitally.class);
 
 	int NumParticles = 1_048_576; // 2x the particles of my original
-	float[] angles;
 
 
 	public Orbitally(Glasses3D glasses3D) {
@@ -28,13 +28,11 @@ public class Orbitally extends Particles {
 	}
 
     @Override
-	public float[] makeVertices() {
+	public void makeVertices(VaoVboManager manager) {
 		log.info("init particle data");
-    	float[] vertices = new float[3*getParticleCount()];
-    	angles = new float[getParticleCount()];
-
+    	Vector3f pos = new Vector3f();
         float maxRadius = 900;
-        for(int b=0; b<getNumPartices(); b++) {
+        for(int b=0; b<getParticleCount(); b++) {
             float r,aa,x1,y1;
             r=aa=x1=y1=1;
             r = (float) Math.sqrt(maxRadius *maxRadius * Math.random());
@@ -42,24 +40,26 @@ public class Orbitally extends Particles {
             x1 = (Math.cos(aa));
             y1 = (Math.sin(aa));
 
-            vertices[b*3 + 0] = r*x1;
-            vertices[b*3 + 1] = r*y1;
-            vertices[b*3 + 2] = (float)(100 * Math.random());
+            pos.x = r*x1;
+            pos.y = r*y1;
+            pos.z = (float)(100 * Math.random());
+            manager.addVertex(pos);
         }
-    	return vertices;
+    	velocities = initVelocities(manager);
 	}
 
     @Override
-	public FloatBuffer  initVelocities() {
+	public FloatBuffer  initVelocities(VaoVboManager manager) {
         massBase = 5f;
         velBase  = .08f;
         float maxRadius = 400;
         float density = massBase*getParticleCount()/(maxRadius*maxRadius*maxRadius);
 
     	FloatBuffer velBuffer   = BufferUtils.createFloatBuffer(4*getParticleCount());
+    	Vector3f pos = new Vector3f();
 
     	for (int v=0; v<getParticleCount(); v++) {
-            Vector3f pos = new Vector3f(vertices[v*3 + 0], vertices[v*3 + 1], vertices[v*3 + 2]);
+            pos = manager.getVertex(this, v);
     		float r  = pos.length();
             float innerMass = density*r*r*r;
             float vr = velBase * Math.sqrt(innerMass/r);
@@ -70,8 +70,6 @@ public class Orbitally extends Particles {
             velBuffer.put((float)(600*massBase*Math.random())); // mass
         }
     	velBuffer.flip();
-    	this.vertices = null;
-    	this.angles = null;
     	return velBuffer;
 	}
 }
