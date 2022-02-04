@@ -2,12 +2,9 @@
 package org.davu.app.space;
 
 import static org.davu.app.space.ColorsGL.*;
-import static org.davu.app.space.Utils.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL30.*;
 
-import java.io.IOException;
 import java.nio.FloatBuffer;
 
 import org.apache.logging.log4j.LogManager;
@@ -18,7 +15,7 @@ import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
 
-public class Particles {
+public class Particles implements VaoVboClient {
 	private static final Logger log = LogManager.getLogger(Particles.class);
 
 	// Other particle counts
@@ -31,20 +28,16 @@ public class Particles {
     protected  float massBase = 5f;
     protected  float velBase  = 7f;
 
-	// program and arguments
-	private int program;
-	private int mvp16Uniform;
-	private int colorUniform;
-	private int alphaUniform;
-	private int vertexShader;
-	private int fragmentShader;
-
 	private int numParticles;
 	private int massiveCount;
 
-    private int vertexBuffer;
+	private int mvp16Uniform;
+	private int colorUniform;
+	private int alphaUniform;
+	private int vertexBuffer;
 
 	private final FloatBuffer matrixBuffer;
+	protected FloatBuffer velocities;
 
 	private float alpha;
 
@@ -57,20 +50,20 @@ public class Particles {
 
 	private Glasses3D glasses3D;
 
-	protected float[] vertices;
+	protected int offset;
+
 
 
 	public Particles(Glasses3D glasses3D) {
 		log.info("Creating particles");
-
 		this.glasses3D = glasses3D;
 
-		numParticles    = NumParticles;
+		setParticleCount(NumParticles);
 
 		// help instances - reusable matrix and buffer
 		matrixBuffer    = BufferUtils.createFloatBuffer(16);
 
-		alpha = 0.2f;
+		alpha = 0.5f;
 		if (numParticles > 2_000_000) {
 			alpha = 0.1f;
 		}
@@ -78,63 +71,34 @@ public class Particles {
 		initDarkMater();
 	}
 
-	public void createParticleProgram() throws IOException {
-		log.info("Creating particles program");
 
-        vertexShader = Shader.createShader("gl/space-points.vs", GL_VERTEX_SHADER);
-        fragmentShader = Shader.createShader("gl/space-points.fs", GL_FRAGMENT_SHADER);
-        program = Shader.createProgram(vertexShader, fragmentShader);
-        glUseProgram(program);
-
-        mvp16Uniform = glGetUniformLocation(program, "mvp");
-        colorUniform = glGetUniformLocation(program, "color3D");
-        alphaUniform = glGetUniformLocation(program, "alpha");
-        glUseProgram(0);
-    }
-
-	public void draw(Matrix4f mvpMatrix) {
-	    glUseProgram(program);
+	@Override
+	public void draw(Matrix4f mvp) {
 	    glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE/* _MINUS_SRC_ALPHA */); // the minus requires depth sorting
 	    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+	    glEnable(GL_POINT_SMOOTH);
+	    glShadeModel(GL_SMOOTH);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE/* _MINUS_SRC_ALPHA */); // the minus requires depth sorting
 	    glEnable(GL_POINT_SPRITE);
-
-	    glasses3D.render(electricBlue(), mvpMatrix, this::particleRender);
+	    glasses3D.render(electricBlue(), mvp, this::particleRender);
 	}
 
 	protected void particleRender(FloatBuffer colorBuffer, Matrix4f mvpMatrix) {
-		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer); // set the GL buffer object handle active for data
 		glUniformMatrix4fv(mvp16Uniform, false, mvpMatrix.get(matrixBuffer));
 		glUniform4fv(colorUniform, colorBuffer);  // for 3D glasses need green render also
-	    glUniform1f(alphaUniform, alpha);  // for 3D glasses need green render also
-	    glDrawArrays(GL_POINTS, 0, numParticles);
+	    glUniform1f(alphaUniform, alpha);
+	    glDrawArrays(GL_POINTS, offset, numParticles);
 	}
 
-    public void bind(float[] vertices) {
-		log.info("binding particle data GL");
-		// all the vertex GL handles
-
-		vertexBuffer = glGenBuffers();        // get a GL buffer object handle
-	    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer); // set the GL buffer object handle active for data
-	    glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW); // load the vertex data into the GPU buffer
-
-	    glFinish();
-    }
-
+	@Override
 	public void cleanup() {
 		log.info("dispose - particles");
-        quiteFree("glDeleteBuffers VBO", ()->glDeleteBuffers(vertexBuffer));
-        quiteFree("glDeleteProgram", ()->glDeleteProgram(program));
-        quiteFree("glDeleteShader vertex", ()->glDeleteShader(vertexShader));
-        quiteFree("glDeleteShader fragment", ()->glDeleteShader(fragmentShader));
 	}
 
-	public Particles init() throws IOException {
+	public Particles init() {
 		log.info("init - particles");
-		// vertexes, once passed to GL, are no longer needed in Java
-		vertices = makeVertices();
-        bind(vertices);
-        createParticleProgram();
+
+
         return this;
 	}
 
@@ -145,20 +109,15 @@ public class Particles {
 		return alpha;
 	}
 
-	public int getVertexBuffer() {
-		return vertexBuffer;
-	}
 	public int getTooCloseCount() {
 		return tooCloseCount;
 	}
 
-	public int getNumPartices() {
-		return numParticles;
-	}
 	public void setParticleCount(int count) {
 		this.numParticles = count;
 		setMassiveCount(count);
 	}
+	@Override
 	public int getParticleCount() {
 		return numParticles;
 	}
@@ -200,42 +159,42 @@ public class Particles {
         return near;
     }
 
-    public float[] makeVertices() {
+    @Override
+	public void makeVertices(VaoVboManager manager) {
 		log.info("init particle data");
-
-    	float[] vertices = new float[numParticles*3];
 
     	float span = 300f;
 
-    	for (int v=0; v<vertices.length; v+=3) {
+    	for (int v=0; v<numParticles; v++) {
 //    		int tries = 0;
 //    		boolean generate = true;
 //    		while (generate && tries++<10) {
-	    		vertices[v+0] = (float)(Math.random() * span)-span/2;
-	    		vertices[v+1] = (float)(Math.random() * span)-span/2;
-	    		// TODO order particles in Z order but when flying this will not be correct
-	    		vertices[v+2] = ((span/numParticles * v - span/2));
+    		Vector3f vertex = new Vector3f();
+    		vertex.x = (float)(Math.random() * span)-span/2;
+    		vertex.y = (float)(Math.random() * span)-span/2;
+    		vertex.z = ((span/numParticles * v - span/2));
 //	    		generate      = checkNearPoint(64, v, vertices);
 //    		}
+    		manager.addVertex(vertex);
 //    		if (v % 100_000 == 0) {
 //    			System.out.println(v);
 //    		}
     	}
-
-    	return vertices;
+    	velocities = initVelocities(manager);
 	}
 
-    public FloatBuffer  initVelocities() {
+    public FloatBuffer  initVelocities(VaoVboManager manager) {
     	FloatBuffer velBuffer   = BufferUtils.createFloatBuffer(numParticles * 4);
     	int v=0;
     	Vector3f dmCenter = new Vector3f(this.dmCenter);
-    	Vector3f particle = new Vector3f();
     	Vector3f worker   = new Vector3f();
     	Vector3f yAxis    = new Vector3f(0,1f,0);
     	Vector3f cross    = new Vector3f();
     	for (; v<numParticles; v++) {
-    		particle.set(vertices[v*3+0],vertices[v*3+1],vertices[v*3+2]);
-    		float dist = particle.distance(dmCenter);
+        	Vector3f particle = manager.getVertex(this, v);
+    		//particle.set(vertices[v*3+0],vertices[v*3+1],vertices[v*3+2]);
+
+        	float dist = particle.distance(dmCenter);
     		float mass = dmMass * dist*dist*dist/dmVolume;
     		float vel = Math.sqrt(mass/dist); ///1000;
     		particle.sub(dmCenter, worker);
@@ -247,7 +206,6 @@ public class Particles {
     		velBuffer.put(0.1f * (1f + (float)(0.66*Math.random()-0.33)) ); // mass
     	}
     	velBuffer.flip();
-    	this.vertices = null;
     	return velBuffer;
 	}
     public void initDarkMater() {
@@ -256,4 +214,32 @@ public class Particles {
         dmCenter = new Vector3f();
 	}
 
+    @Override
+    public void setOffsetIndex(int offsetIndex) {
+    	this.offset = offsetIndex;
+    }
+
+    @Override
+	public void setVertexBuffer(int vertexBuffer) {
+		this.vertexBuffer = vertexBuffer;
+	}
+	public int getVertexBuffer() {
+		return vertexBuffer;
+	}
+    @Override
+	public void setMvp16Uniform(int mvp16Uniform) {
+		this.mvp16Uniform = mvp16Uniform;
+	}
+    @Override
+	public void setColorUniform(int colorUniform) {
+		this.colorUniform = colorUniform;
+	}
+    @Override
+	public void setAlphaUniform(int alphaUniform) {
+		this.alphaUniform = alphaUniform;
+	}
+
+    public FloatBuffer getVelocities() {
+		return velocities;
+	}
 }

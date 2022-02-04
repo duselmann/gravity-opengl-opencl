@@ -7,7 +7,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.davu.app.space.Glasses3D;
 import org.davu.app.space.Particles;
+import org.davu.app.space.VaoVboManager;
 import org.joml.Math;
+import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
 
@@ -28,34 +30,34 @@ public class Universe2D extends Particles {
 	}
 
     @Override
-	public float[] makeVertices() {
+	public void makeVertices(VaoVboManager manager) {
 		log.info("init particle data");
 
         massBase = .1f;
         velBase  = 0f;
         float maxRadius = 600;
-    	float[] vertices = new float[3*getParticleCount()];
     	velBuffer   = BufferUtils.createFloatBuffer(4*getParticleCount());
+    	Vector3f pos = new Vector3f();
 
-        for(int b=0; b<getNumPartices(); b++) {
+        for(int b=0; b<getParticleCount(); b++) {
             float r = (maxRadius * (float)Math.random()) + 100;
             float aa = (float)(Math.random()*Math.PI*2);
-            vertices[b*3 + 0] = r*(Math.cos(aa));
-            vertices[b*3 + 1] = r*(Math.sin(aa));
-            vertices[b*3 + 2] = 0;
+            pos.x = r*(Math.cos(aa));
+            pos.y = r*(Math.sin(aa));
+            pos.z = 0;
+            manager.addVertex(pos);
 
             velBuffer.put((float)Math.random()*velBase-velBase/2)
             .put((float)Math.random()*velBase-velBase/2)
             .put((float)Math.random()*velBase-velBase/2);
             velBuffer.put(r/2500); // mass
         }
-    	return vertices;
+    	velBuffer.flip();
+    	velocities = velBuffer;
 	}
 
     @Override
-	public FloatBuffer  initVelocities() {
-    	velBuffer.flip();
-    	this.vertices = null;
-    	return velBuffer;
+	public FloatBuffer  initVelocities(VaoVboManager manager) {
+    	return velocities;
 	}
 }

@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.davu.app.space.Glasses3D;
 import org.davu.app.space.Particles;
+import org.davu.app.space.VaoVboManager;
 import org.joml.Math;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
@@ -17,7 +18,6 @@ public class Galaxies extends Particles {
 
 	protected float coreMassBase  = 5e3f;
     protected int NumParticles = 1_048_576*2;
-	protected FloatBuffer velBuffer;
 	protected float[] coreMass;
 	protected float[] maxRadius;
 	protected float ratio;
@@ -29,7 +29,7 @@ public class Galaxies extends Particles {
 
 		setParticleCount(NumParticles);
 		setMassiveCount(2);
-		setAlpha(.5f);
+		setAlpha(.15f);
         coreMass = new float[] {coreMassBase, coreMassBase};
 		maxRadius = new float[] {350, 350};
 		ratio = 0.5f;
@@ -39,20 +39,19 @@ public class Galaxies extends Particles {
 	}
 
     @Override
-	public float[] makeVertices() {
+	public void makeVertices(VaoVboManager manager) {
 		log.info("init particle data");
         velBase  = 1f;
     	Vector3f coreDist = new Vector3f(500,0,250);
-    	float[] vertices = new float[3*getParticleCount()];
         // set the core locations in the first two mass registers
-        vertices[0]   = -coreDist.x;
-        vertices[1]   = -coreDist.y;
-        vertices[2]   = -coreDist.z;
-        vertices[3+0] =  coreDist.x;
-        vertices[3+1] =  coreDist.y;
-        vertices[3+2] =  coreDist.z;
+    	Vector3f pos = new Vector3f();
+        pos.x = -coreDist.x;
+        pos.y = -coreDist.y;
+        pos.z = -coreDist.z;
+        manager.addVertex(pos);
+        manager.addVertex(coreDist);
 
-    	velBuffer   = BufferUtils.createFloatBuffer(4*getParticleCount());
+        FloatBuffer velBuffer   = BufferUtils.createFloatBuffer(4*getParticleCount());
         Vector3f[] coreNormal = new Vector3f[] {new Vector3f(0,0,1), new Vector3f(1,0,0)};
 
         Vector3f coreVel1 = coreVel[0];
@@ -63,7 +62,7 @@ public class Galaxies extends Particles {
         velBuffer.put(coreMass[1]); // mass
 
 
-        for(int b=2; b<getNumPartices(); b++) {
+        for(int b=2; b<getParticleCount(); b++) {
             int leftRight = Math.random()<ratio ?0 :1;
             float r,aa,a1,a2;
             r = (maxRadius[leftRight] * (float)Math.random() + (50/(1+leftRight)));
@@ -71,7 +70,6 @@ public class Galaxies extends Particles {
             a1 = (Math.cos(aa));
             a2 = (Math.sin(aa));
     		// get position of particle
-            Vector3f pos = new Vector3f();
 
             if (leftRight==1) {
             	pos.set(((float)Math.random()*10f-5f)*2, // x
@@ -107,19 +105,19 @@ public class Galaxies extends Particles {
             velBuffer.put((float)(massBase*Math.random())); // mass of each particle
 
             leftRight = leftRight * 2 - 1;
-            vertices[b*3 + 0] = leftRight*coreDist.x + pos.x;
-            vertices[b*3 + 1] = leftRight*coreDist.y + pos.y;
-            vertices[b*3 + 2] = leftRight*coreDist.z + pos.z;
+            pos.x = leftRight*coreDist.x + pos.x;
+            pos.y = leftRight*coreDist.y + pos.y;
+            pos.z = leftRight*coreDist.z + pos.z;
+            manager.addVertex(pos);
         }
 
-    	return vertices;
+        velBuffer.flip();
+        velocities = velBuffer;
 	}
 
     @Override
-	public FloatBuffer  initVelocities() {
-    	velBuffer.flip();
-    	this.vertices = null;
-    	return velBuffer;
+	public FloatBuffer  initVelocities(VaoVboManager manager) {
+    	return velocities;
 	}
 
     @Override

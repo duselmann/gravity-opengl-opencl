@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.davu.app.space.Glasses3D;
 import org.davu.app.space.Particles;
+import org.davu.app.space.VaoVboManager;
 import org.joml.Math;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
@@ -28,15 +29,13 @@ public class Universe3D extends Particles {
 	}
 
     @Override
-	public float[] makeVertices() {
+	public void makeVertices(VaoVboManager manager) {
 		log.info("init particle data");
-    	float[] vertices = new float[3*getParticleCount()];
-
+    	Vector3f pos = new Vector3f();
         float maxRadius = 25;
         Random rand = new Random();
-        for(int b=0; b<getNumPartices(); b++) {
+        for(int b=0; b<getParticleCount(); b++) {
             boolean generate = true;
-            Vector3f pos = new Vector3f();
             while (generate) {
                 pos = new Vector3f(
                 		(float)rand.nextGaussian(),
@@ -44,17 +43,16 @@ public class Universe3D extends Particles {
                 		(float)rand.nextGaussian())
                         .normalize()
                         .mul((float)(maxRadius*Math.random()+25f));
-                vertices[b*3 + 0] = (int)pos.x;
-                vertices[b*3 + 1] = (int)pos.y;
-                vertices[b*3 + 2] = (int)pos.z+500;
+                pos.z+=500;
+                manager.addVertex(pos);
                 generate = false; //checkNearPoint(16, b, vertices);
             }
         }
-    	return vertices;
+        velocities = initVelocities(manager);
 	}
 
     @Override
-	public FloatBuffer  initVelocities() {
+	public FloatBuffer  initVelocities(VaoVboManager manager) {
         massBase = .1f;
         velBase  = 1f;
         double maxMagnitude = 0;
@@ -63,7 +61,7 @@ public class Universe3D extends Particles {
     	FloatBuffer velBuffer   = BufferUtils.createFloatBuffer(4*getParticleCount());
 
     	for (int v=0; v<getParticleCount(); v++) {
-            Vector3f pos = new Vector3f(vertices[v*3 + 0], vertices[v*3 + 1], vertices[v*3 + 2]);
+            Vector3f pos = manager.getVertex(this, v);
             Vector3f normal = pos.normalize(new Vector3f());
             Vector3f vel = new Vector3f((velBase*normal.x),(velBase*normal.y),(velBase*normal.z));
             double mag   = vel.length();
@@ -72,10 +70,9 @@ public class Universe3D extends Particles {
             velBuffer.put(vel.x).put(vel.y).put(vel.z);
             velBuffer.put((float)(massBase*Math.random())); // mass
         }
-    	System.out.println(maxMagnitude);
-    	System.out.println(minMagnitude);
+//    	System.out.println(maxMagnitude);
+//    	System.out.println(minMagnitude);
     	velBuffer.flip();
-    	this.vertices = null;
     	return velBuffer;
 	}
 }

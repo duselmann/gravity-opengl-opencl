@@ -3,7 +3,7 @@ package org.davu.app.space;
 
 import static org.davu.app.space.Utils.*;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 import static org.lwjgl.system.MemoryUtil.memAddress;
 
@@ -49,7 +49,7 @@ public class Window {
             throw new AssertionError("Failed to create the GLFW window");
         }
 	    glfwMakeContextCurrent(window);
-        glfwSwapInterval(1);
+        glfwSwapInterval(1); // vsync, could be zero, need to find out what it is for vsync
         glfwShowWindow(window);
 
         IntBuffer framebufferSize = BufferUtils.createIntBuffer(2);
@@ -65,6 +65,12 @@ public class Window {
 
         return this;
 	}
+
+	public void clearGL() {
+	    glClearColor(0f, 0f, 0f, 1.0f);
+	    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	}
+
 
 	public void cleanup() {
         quiteFree("keyCallback",()->keyCallback.free());
