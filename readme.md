@@ -21,6 +21,12 @@
 - Right mouse button   increase speed much faster.
 - Letting go of all controls reduces speed.
 
+There is a 5 second delay before OpenCL is called so there <br>
+is time to change location before gravity. Often when creating <br>
+new scenarios, the gravity warps the initial state too soon.<br>
+It is useful to find different view points to get a feel for<br>
+things before they start animating.
+
 ##### opencl.advanced classes
 - Click and drag to move the simulation in the window
 - Mouse roller or touchpad two-finger scroll to zoom in/out
@@ -40,6 +46,7 @@
 ### Running Space main
 
     java -jar target/gravity.jar
+    java -jar target/gravity.jar <scenario class name>
 
 ### Running Other main
 
