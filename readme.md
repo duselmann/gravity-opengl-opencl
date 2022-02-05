@@ -6,6 +6,10 @@
 - Currently only works with Intel chipset. (see TODOs)
 - davu is short for David Uselmann
 
+
+
+<img src="https://github.com/duselmann/gravity-opengl-opencl/raw/main/samples/1millionPoints1.PNG" width=75% height=75%>
+
 #### Controls
 
 ##### Space.main
