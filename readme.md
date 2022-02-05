@@ -74,11 +74,6 @@
 - I matched the OpenGL GPU for OpenCL. 
 - See org.davu.app.space.OpenCL.java line 57 for OpenCL GPU assignment.
 
-##### Factory for initial condition instances.
-- org.davu.app.space.Space#44 has a new instance of the scenario in use.
-- I need to construct a factory to control that scenario instantiated.
-- For now, the instance name can be replaced with any subclass of Particles.
-
 ##### Maybe change package.html
 - Thinking I might rather they be readme.md files for github display.
 

@@ -3,15 +3,13 @@ package org.davu.app.space.scenarios;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.davu.app.space.display.Glasses3D;
 import org.joml.Vector3f;
 
 
 public class Galaxies2b extends Galaxies2 {
 	private static final Logger log = LogManager.getLogger(Galaxies2b.class);
 
-	public Galaxies2b(Glasses3D glasses3D) {
-		super(glasses3D);
+	public Galaxies2b() {
 		log.info("Scenario Initialization");
 
 		setAlpha(.1f);

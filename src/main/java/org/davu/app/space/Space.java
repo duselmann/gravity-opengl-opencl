@@ -13,7 +13,6 @@ import org.davu.app.space.display.Particles;
 import org.davu.app.space.display.VaoVboManager;
 import org.davu.app.space.display.ViewMatrix;
 import org.davu.app.space.display.Window;
-import org.davu.app.space.scenarios.*;
 import org.lwjgl.opengl.GL;
 
 import java.io.IOException;
@@ -28,9 +27,15 @@ public class Space implements Runnable {
 	private DebugUtils debug;
 	private Glasses3D glasses3d;
 	private VaoVboManager vertexManager;
-	private Particles particles;
+    private GravityCL gravity;
+	protected Particles particles;
 
-    GravityCL gravity;
+
+	public Space(String scenario) {
+        view = new ViewMatrix(800,600);
+        glasses3d = new Glasses3D(view);
+		particles = new ScenarioManager().build(scenario, glasses3d);
+	}
 
 	public void initGL() throws IOException  {
         if (!glfwInit()) {
@@ -38,17 +43,14 @@ public class Space implements Runnable {
         }
 
         window = new Window().init();
-        view = new ViewMatrix(window.getWidth(), window.getHeight());
+        view.updateAspect(window.getWidth(), window.getHeight());
 
         GLCapabilities caps = GL.createCapabilities(); // connects lwjgl to the native libraries
         if (!caps.OpenGL30) {
             throw new AssertionError("This app requires OpenGL 3.0.");
         }
 
-        // TODO factory pattern like mechanism to select the initial conditions
-        glasses3d = new Glasses3D(view);
         vertexManager = new VaoVboManager();
-        particles = new Galaxies2b(glasses3d);
         vertexManager.register(particles);
         vertexManager.register(new Compass(glasses3d));
         vertexManager.init();
@@ -124,7 +126,11 @@ public class Space implements Runnable {
 	}
 
 	public static void main(String[] args) {
-	    new Space().run();
+		String scenario = "Galaxies2b";
+		if (args.length>0) {
+			scenario = args[0];
+		}
+	    new Space(scenario).run();
 	}
 
 }

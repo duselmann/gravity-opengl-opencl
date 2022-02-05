@@ -21,14 +21,16 @@ public class SprialRibbon extends Particles {
 	private FloatBuffer velBuffer;
 
 
-	public SprialRibbon(Glasses3D glasses3D) {
-		super(glasses3D);
-
+	public SprialRibbon() {
 		setParticleCount(NumParticles);
 		setMassiveCount(NumParticles/6);
 		setAlpha(0.8f);
+	}
+	@Override
+	public void setGlasses(Glasses3D glasses) {
+		super.setGlasses(glasses);
 		glasses3D.setGlasses();
-		glasses3D.setSeparation3D(40);
+		glasses3D.setSeparation3D(40f);
 	}
 
     @Override

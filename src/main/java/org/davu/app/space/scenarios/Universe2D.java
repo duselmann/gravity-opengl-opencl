@@ -5,7 +5,6 @@ import java.nio.FloatBuffer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.davu.app.space.display.Glasses3D;
 import org.davu.app.space.display.Particles;
 import org.davu.app.space.display.VaoVboManager;
 import org.joml.Math;
@@ -21,9 +20,7 @@ public class Universe2D extends Particles {
 	private FloatBuffer velBuffer;
 
 
-	public Universe2D(Glasses3D glasses3D) {
-		super(glasses3D);
-
+	public Universe2D() {
 		setParticleCount(NumParticles);
 		setMassiveCount(1_024);
 		setAlpha(0.8f);

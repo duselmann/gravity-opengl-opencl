@@ -6,7 +6,6 @@ import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.davu.app.space.display.Glasses3D;
 import org.davu.app.space.display.Particles;
 import org.davu.app.space.display.VaoVboManager;
 import org.joml.Math;
@@ -20,9 +19,7 @@ public class Universe3D extends Particles {
 	int NumParticles = 4_096*8; // 2x the particles of my original
 
 
-	public Universe3D(Glasses3D glasses3D) {
-		super(glasses3D);
-
+	public Universe3D() {
 		setParticleCount(NumParticles*2);
 		setMassiveCount(NumParticles);
 		setAlpha(0.33f);

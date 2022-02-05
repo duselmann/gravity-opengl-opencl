@@ -48,15 +48,18 @@ public class Particles implements VaoVboClient {
 
 	private int tooCloseCount;
 
-	private Glasses3D glasses3D;
+	protected Glasses3D glasses3D;
 
 	protected int offset;
 
 
-
 	public Particles(Glasses3D glasses3D) {
+		this();
+		setGlasses(glasses3D);
+	}
+
+	public Particles() {
 		log.info("Creating particles");
-		this.glasses3D = glasses3D;
 
 		setParticleCount(NumParticles);
 
@@ -255,5 +258,10 @@ public class Particles implements VaoVboClient {
 
 	public void doneWithVelocityData() {
 		velocities = null; // frees up memory
+	}
+
+
+	public void setGlasses(Glasses3D glasses) {
+		glasses3D = glasses;
 	}
 }

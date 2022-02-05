@@ -5,7 +5,6 @@ import java.nio.FloatBuffer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.davu.app.space.display.Glasses3D;
 import org.davu.app.space.display.Particles;
 import org.davu.app.space.display.VaoVboManager;
 import org.joml.Math;
@@ -19,9 +18,7 @@ public class Galactic extends Particles {
 	int NumParticles = 1_048_576; // 2x the particles of my original
 
 
-	public Galactic(Glasses3D glasses3D) {
-		super(glasses3D);
-
+	public Galactic() {
 		setParticleCount(NumParticles);
 		setMassiveCount(1_024);
 		setAlpha(0.2f);
