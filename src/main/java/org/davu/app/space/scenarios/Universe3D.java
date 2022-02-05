@@ -6,9 +6,9 @@ import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.davu.app.space.Glasses3D;
-import org.davu.app.space.Particles;
-import org.davu.app.space.VaoVboManager;
+import org.davu.app.space.display.Glasses3D;
+import org.davu.app.space.display.Particles;
+import org.davu.app.space.display.VaoVboManager;
 import org.joml.Math;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;

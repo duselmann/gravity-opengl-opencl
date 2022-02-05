@@ -1,5 +1,5 @@
 // Copyright (c) 2022 David Uselmann
-package org.davu.app.space;
+package org.davu.app.space.display;
 
 // TODO implement a frustum for clipping what is displayed
 //import org.joml.FrustumIntersection;

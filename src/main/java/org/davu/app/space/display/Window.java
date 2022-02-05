@@ -1,5 +1,5 @@
 // Copyright (c) 2022 David Uselmann
-package org.davu.app.space;
+package org.davu.app.space.display;
 
 import static org.davu.app.space.Utils.*;
 import static org.lwjgl.glfw.GLFW.*;

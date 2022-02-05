@@ -1,7 +1,7 @@
 // Copyright (c) 2022 David Uselmann
-package org.davu.app.space;
+package org.davu.app.space.display;
 
-import static org.davu.app.space.ColorsGL.*;
+import static org.davu.app.space.display.ColorsGL.*;
 
 import java.nio.FloatBuffer;
 import java.util.function.BiConsumer;

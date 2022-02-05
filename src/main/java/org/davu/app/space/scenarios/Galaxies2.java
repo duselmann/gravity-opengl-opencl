@@ -3,7 +3,7 @@ package org.davu.app.space.scenarios;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.davu.app.space.Glasses3D;
+import org.davu.app.space.display.Glasses3D;
 
 
 public class Galaxies2 extends Galaxies {

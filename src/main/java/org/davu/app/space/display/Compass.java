@@ -1,7 +1,7 @@
 // Copyright (c) 2022 David Uselmann
-package org.davu.app.space;
+package org.davu.app.space.display;
 
-import static org.davu.app.space.ColorsGL.*;
+import static org.davu.app.space.display.ColorsGL.*;
 import static org.lwjgl.opengl.GL30.*;
 
 import java.io.IOException;
@@ -13,7 +13,13 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
-
+/**
+ * Displays a three axis guide to assist with spatial orientation.
+ * While initially included as a debug tool, I keep it around
+ * because I found it interesting for typical use.
+ * @author davu
+ *
+ */
 public class Compass implements VaoVboClient {
 	private static final Logger log = LogManager.getLogger(Compass.class);
 

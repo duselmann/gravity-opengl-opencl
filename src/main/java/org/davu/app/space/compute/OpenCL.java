@@ -1,5 +1,5 @@
 // Copyright (c) 2022 David Uselmann
-package org.davu.app.space;
+package org.davu.app.space.compute;
 
 import static org.davu.app.space.Utils.*;
 import static org.davu.opencl.utils.CLInfo.*;

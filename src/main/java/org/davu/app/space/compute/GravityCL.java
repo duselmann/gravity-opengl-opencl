@@ -1,5 +1,5 @@
 // Copyright (c) 2022 David Uselmann
-package org.davu.app.space;
+package org.davu.app.space.compute;
 
 import static org.davu.app.space.Utils.*;
 import static org.davu.opencl.utils.CLUtils.*;
@@ -12,6 +12,8 @@ import java.nio.IntBuffer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.davu.app.space.display.Particles;
+import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
 
@@ -46,6 +48,12 @@ public class GravityCL {
 	private int glParticles;
 
 	private IntBuffer clResult;
+
+	private Vector3f dmCenter;
+
+	private float dmMass;
+
+	private float dmVolume;
 
     public GravityCL(long glWindow, Particles particles) {
 		String filePath = "cl/space-gravity.txt";
@@ -95,11 +103,19 @@ public class GravityCL {
 
 	private void bindCL(Particles particles) {
     	log.info("CL Queue data structures");
+
+    	// shares the OpenGL particles memory buffer with OpenCL
     	positionMem = clCreateFromGLBuffer(openCl.getContext(), CL_MEM_READ_WRITE, glParticles, clResult);
     	isSuccess(clResult);
 
+    	// loads the velocity and mass into OpenCL memory
     	velBuffer = particles.getVelocities();
     	velocityMem = writeBuffer(queue, openCl.getContext(), CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, velBuffer);
+    	particles.doneWithVelocityData();
+
+    	this.dmCenter = particles.getDarmMatterCenter();
+    	this.dmMass   = particles.getDarkMatterMass();
+    	this.dmVolume = particles.getDarkMatterVolume();
 	}
 
 	public void compute() { // TODO start with passing in 0.1f, GL dt will be too small
@@ -117,10 +133,9 @@ public class GravityCL {
             result = clSetKernelArg1f(kernel, arg++, dt);        // delta time arg
             isSuccess(result);
             // darkMatter position and mass arg
-            Particles p = particles;
-            result = clSetKernelArg4f(kernel, arg++, p.dmCenter.x,p.dmCenter.y,p.dmCenter.z,p.dmVolume);
+            result = clSetKernelArg4f(kernel, arg++, dmCenter.x,dmCenter.y,dmCenter.z,dmVolume);
             isSuccess(result);
-            result = clSetKernelArg1f(kernel, arg++, particles.dmMass);    // darkMatter radius arg
+            result = clSetKernelArg1f(kernel, arg++, dmMass);    // darkMatter radius arg
             isSuccess(result);
 
             // NOTE: Send a signal to execute the kernel with return buffer size

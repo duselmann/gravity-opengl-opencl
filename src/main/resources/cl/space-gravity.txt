@@ -48,26 +48,26 @@ float3 attraction(float3 accumAccel, float3 body1, float mass, float3 body2) {
 kernel void gravityDarkMatter(
             global float*  positions,     // from GL vertexes double sized array of float3
             global float4* velocities,    // velocity.w is mass only needs to be single sized
-            unsigned int   numBodies,     // 
+            unsigned int   numMassive,    // number of bodies the influence gravity calculations
             float  dt,                    // iterative integration interval, not system clock sync
             float4 dmCenter,              // Dark Matter center position, dmCenter.w is volume
             float  dmMass                 // Dark Matter Mass
             ) 
 {
     // positions need two buffers, the updated and the origin, while velocities only needs one current value
-    unsigned int index     = get_global_id(0);      // 0 to < numBodies
+    unsigned int index     = get_global_id(0);       // 0 to < number of all bodies
 
     float3 position        = (float3)(positions[index*3 +0],positions[index*3 +1],positions[index*3 +2]);    // fetch the current position/body for this kernel
     float3 acceleration    = (float3)(0,0,0);        // init the acceleration for the body for this dt
 
-    for (unsigned int b = 0; b<numBodies; b++) {
+    for (unsigned int b = 0; b<numMassive; b++) {    // loop over all massive bodies for gravitational influence
         if (b != index) { // self gravity
             float3 position2 = (float3)(positions[b*3 +0],positions[b*3 +1],positions[b*3 +2]);    // fetch the current position/body for this kernel
             acceleration = attraction(acceleration, position2, velocities[b].w, position);
         }
     }
 
-    //barrier(CLK_LOCAL_MEM_FENCE); // no fence necessary because new position buffer
+    //barrier(CLK_LOCAL_MEM_FENCE); // necessary if the positions should be updated after all gravity calculations
 
     // DARK MATTER
     // distance the position is from the center of the dark matter

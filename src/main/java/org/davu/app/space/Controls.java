@@ -3,6 +3,12 @@ package org.davu.app.space;
 
 import static org.lwjgl.glfw.GLFW.*;
 
+import org.davu.app.space.compute.GravityCL;
+import org.davu.app.space.display.Glasses3D;
+import org.davu.app.space.display.Particles;
+import org.davu.app.space.display.ViewMatrix;
+import org.davu.app.space.display.Window;
+
 public class Controls {
 
 	private Window window;

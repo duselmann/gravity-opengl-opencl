@@ -1,7 +1,18 @@
-package org.davu.app.space;
+// Copyright (c) 2022 David Uselmann
+package org.davu.app.space.display;
 
 import org.joml.Matrix4f;
 
+/**
+ * Indicates that this implementation needs OpenGL
+ * Vertex Arrays and Buffers to display.
+ *
+ * It will communicate its vertex needs and the manager
+ * with return the necessary settings like offset and
+ * Uniforms for the associated program.
+ *
+ * @author davu
+ */
 public interface VaoVboClient {
 	public void cleanup();
 	public void draw(Matrix4f mvp);

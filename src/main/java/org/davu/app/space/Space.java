@@ -5,6 +5,14 @@ import static org.davu.app.space.Utils.*;
 import static org.lwjgl.glfw.GLFW.*;
 
 import org.lwjgl.opengl.GLCapabilities;
+import org.davu.app.space.compute.GravityCL;
+import org.davu.app.space.display.Compass;
+import org.davu.app.space.display.DebugUtils;
+import org.davu.app.space.display.Glasses3D;
+import org.davu.app.space.display.Particles;
+import org.davu.app.space.display.VaoVboManager;
+import org.davu.app.space.display.ViewMatrix;
+import org.davu.app.space.display.Window;
 import org.davu.app.space.scenarios.*;
 import org.lwjgl.opengl.GL;
 

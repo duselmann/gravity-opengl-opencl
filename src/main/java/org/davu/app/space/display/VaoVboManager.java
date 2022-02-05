@@ -1,4 +1,5 @@
-package org.davu.app.space;
+// Copyright (c) 2022 David Uselmann
+package org.davu.app.space.display;
 
 import static org.davu.app.space.Utils.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -13,6 +14,23 @@ import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
+/**
+ * Manages Vertex Array and Buffer objects for multiple uses.
+ * First, web chatter suggest it is more efficient if GL need
+ * not swap buffers to display different entities.
+ * Second, when I did configure separately, the last one won.
+ * It is likely because I was not fully swapping buffers.
+ *
+ * This works by expecting all new display implementations to
+ * register with this manager. It will communicate the index
+ * offset in the vertex array that it should use when displaying.
+ * The clients will submit their vertex counts.
+ *
+ * After vertex data is passed to OpenGL, it is not needed in Java
+ * memory and is disposed the Java way... setting it to null.
+ *
+ * @author davu
+ */
 public class VaoVboManager {
 	private static final Logger log = LogManager.getLogger(VaoVboManager.class);
 
@@ -64,7 +82,7 @@ public class VaoVboManager {
 		}
 		bind();
 		// vertexes, once passed to GL, are no longer needed in Java
-		vertices = null;
+		vertices = null; // frees up memory
         createProgram();
 		for (Client client : clients) {
 			client.offset = currentIndex;

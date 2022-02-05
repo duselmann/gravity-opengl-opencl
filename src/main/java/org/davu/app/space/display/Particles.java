@@ -1,7 +1,7 @@
 // Copyright (c) 2022 David Uselmann
-package org.davu.app.space;
+package org.davu.app.space.display;
 
-import static org.davu.app.space.ColorsGL.*;
+import static org.davu.app.space.display.ColorsGL.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.*;
 
@@ -241,5 +241,19 @@ public class Particles implements VaoVboClient {
 
     public FloatBuffer getVelocities() {
 		return velocities;
+	}
+
+    public Vector3f getDarmMatterCenter() {
+		return dmCenter;
+	}
+    public float getDarkMatterMass() {
+		return dmMass;
+	}
+    public float getDarkMatterVolume() {
+		return dmVolume;
+	}
+
+	public void doneWithVelocityData() {
+		velocities = null; // frees up memory
 	}
 }

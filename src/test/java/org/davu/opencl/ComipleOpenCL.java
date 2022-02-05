@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 
-import org.davu.app.space.OpenCL;
+import org.davu.app.space.compute.OpenCL;
 import org.junit.jupiter.api.Test;
 
 /**
