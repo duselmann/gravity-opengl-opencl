@@ -95,9 +95,20 @@ things before they start animating.
 - Newtonian gravity is normalizable. The distances and masses are relative magnitude numbers.
 - This could be a natural range if Newton's Constant and actual kg, m, sec initial conditions are used.
 
+#### All Other Scenarios
+	java -jar target/gravity.jar Explosion3D
+	java -jar target/gravity.jar Galactic
+	java -jar target/gravity.jar Galaxies
+	java -jar target/gravity.jar Galaxies2
+	java -jar target/gravity.jar Galaxies2a
+	java -jar target/gravity.jar Galaxies2b
+	java -jar target/gravity.jar Orbitally
+	java -jar target/gravity.jar SprialRibbon
+	java -jar target/gravity.jar Universe2D
+	java -jar target/gravity.jar Universe3D
 
-### All Other main methods
 
+#### All Other main methods
     java -cp target/gravity.jar org.davu.opencl.simple.TestInfo
     java -cp target/gravity.jar org.davu.opencl.simple.Test1D
     java -cp target/gravity.jar org.davu.opencl.simple.Test1Dvector
