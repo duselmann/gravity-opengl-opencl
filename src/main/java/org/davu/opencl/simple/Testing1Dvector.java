@@ -18,6 +18,29 @@ import org.lwjgl.opencl.CLContextCallback;
 import org.lwjgl.opencl.CLProgramCallback;
 
 
+/**
+ * Sets up OpenCL,
+ * sends 2 data arrays,
+ * adds them in parallel,
+ * and fetches the results.
+ *
+ * Sounds a lot like the Testing1D because all that changed
+ * is the cl code. Instead of a float*, this uses a float4*.
+ * There isn't much difference internally but they can be
+ * pulled sequentially faster four at a time.
+ *
+ * Need to reduce the count then, proportionally;
+ * pushKernelToQueue(queue, kernel, 6) instead of 24.
+ *
+ * Also notice that the cl addition is a vector of length 4
+ * added together in one addition; r[xid] = a[xid] + b[xid]
+ * which is identical to Testing1D. The code is the same because
+ * OpenCL, like C++, overload some operators.
+ *
+ * I am reasonably certain that we cannot write custom overloads.
+ *
+ * @author davu
+ */
 public class Testing1Dvector {
 
 

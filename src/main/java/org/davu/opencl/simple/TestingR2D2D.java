@@ -17,7 +17,15 @@ import org.lwjgl.opencl.CL;
 import org.lwjgl.opencl.CLContextCallback;
 import org.lwjgl.opencl.CLProgramCallback;
 
-
+/**
+ * Similar to Testing2D2D with the difference
+ * that rows and are greater than the workgroup
+ * count on an Intel GPU by x2. This demonstrates
+ * that OpenGL on the  GPU orchestrated the cycling
+ * of groups of active threads.
+ *
+ * @author davu
+ */
 public class TestingR2D2D {
 
 

@@ -18,6 +18,28 @@ import org.lwjgl.opencl.CLContextCallback;
 import org.lwjgl.opencl.CLProgramCallback;
 
 
+/**
+ * Sets up OpenCL,
+ * sends 2 data arrays,
+ * adds them in parallel,
+ * and fetches the results.
+ *
+ * This one differs by the referencing in the cl.
+ * Notice that instead of selecting one id, it selects
+ * 2 and has to perform the math to find the entities.
+ * OpenCL does not find the entities automatically.
+ *
+ * Once we have both indexes, row and column, then we
+ * multiply by the row size and add the column.
+ * Alternatively, OpenCL is unbiased to column:row format.
+ * if the data is in column:row order then flip the math.
+ *
+ * I send the data in a single dimensional array to emphasize,
+ * that data is stored that way in RAM. The 2D nature is for
+ * our mental organization, not for the GPU.
+ *
+ * @author davu
+ */
 public class Testing2D {
 
 

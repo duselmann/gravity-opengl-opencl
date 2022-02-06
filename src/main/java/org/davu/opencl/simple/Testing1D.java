@@ -17,7 +17,14 @@ import org.lwjgl.opencl.CL;
 import org.lwjgl.opencl.CLContextCallback;
 import org.lwjgl.opencl.CLProgramCallback;
 
-
+/**
+ * Sets up OpenCL,
+ * sends 2 data arrays,
+ * adds them in parallel,
+ * and fetches the results.
+ *
+ * @author davu
+ */
 public class Testing1D {
 
 

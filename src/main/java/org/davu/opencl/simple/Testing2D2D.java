@@ -18,6 +18,43 @@ import org.lwjgl.opencl.CLContextCallback;
 import org.lwjgl.opencl.CLProgramCallback;
 
 
+/**
+ * Sets up OpenCL,
+ * sends 2 data arrays,
+ * adds them in parallel,
+ * and fetches the results.
+ *
+ * This example tries to highlight the use of
+ * local or workgroup memory.
+ * By using local memory when possible, the speed
+ * can be 1000x or more because it does not have to
+ * reach out to the GPU RAM, using the workgroup
+ * cache instead.
+ *
+ * In order to accomplish this, there are two new
+ * concepts in use: local groups and barriers.
+ *
+ * There is a local 2x2 logical grouping inside the
+ * larger 4x6 global rows and columns.
+ * This example loads these groups into local ram
+ * then performs the computation locally.
+ *
+ * Since these are highly parallel kernels, it is
+ * required to wait for all "threads" to load their
+ * data element before performing a calculation.
+ *
+ * OpenCL has several wait options called fences.
+ * After a fence, each kernel can access the data
+ * from another data element fetched by another
+ * threads copy to local action.
+ *
+ * This is only has more performance if the data copied
+ * is utilized more times than the global fetch would
+ * incur delays. For this trivial example, it is not
+ * beneficial but demonstrative.
+ *
+ * @author davu
+ */
 public class Testing2D2D {
 
 
