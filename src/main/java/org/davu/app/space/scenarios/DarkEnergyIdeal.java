@@ -12,16 +12,16 @@ import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
 
-public class Expansion extends Particles {
-	private static final Logger log = LogManager.getLogger(Expansion.class);
+public class DarkEnergyIdeal extends Particles {
+	private static final Logger log = LogManager.getLogger(DarkEnergyIdeal.class);
 
-	int NumParticles = 1_048_576;
+	int NumParticles = 1_048_576*16;
 
 
-	public Expansion() {
-		setParticleCount(NumParticles*4);
+	public DarkEnergyIdeal() {
+		setParticleCount(NumParticles);
 		setMassiveCount(1_024);
-		setAlpha(0.05f);
+		setAlpha(0.01f);
 	}
 
     @Override
@@ -48,7 +48,7 @@ public class Expansion extends Particles {
     @Override
 	public FloatBuffer  initVelocities(VaoVboManager manager) {
         massBase = 5f;
-        velBase  = .08f;
+        velBase  = .05f;
         float maxRadius = 400;
         float density = massBase*getParticleCount()/(maxRadius*maxRadius*maxRadius);
 
@@ -63,14 +63,18 @@ public class Expansion extends Particles {
 
             Vector3f velv = new Vector3f(0,0,1).cross(pos).normalize().mul(vr);
 
-            pos.mul(.1f);
-            velv.add(pos);
+            addDarkEnergy(pos, velv);
 
             velBuffer.put(velv.x).put(velv.y).put(velv.z);
             velBuffer.put((float)(600*massBase*Math.random())); // mass
         }
     	velBuffer.flip();
     	return velBuffer;
+	}
+
+	protected void addDarkEnergy(Vector3f pos, Vector3f velv) {
+		pos.mul(.1f);
+		velv.add(pos);
 	}
 }
 // Near as I can tell, the $100 discount promotion for opening the account was not applied

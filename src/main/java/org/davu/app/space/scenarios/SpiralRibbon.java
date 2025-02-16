@@ -16,7 +16,7 @@ import org.lwjgl.BufferUtils;
 public class SpiralRibbon extends Particles {
 	private static final Logger log = LogManager.getLogger(SpiralRibbon.class);
 
-	int NumParticles = 4_096*2; // 2x the particles of my original
+	int NumParticles = 4_096*16; // 2x the particles of my original
 
 	private FloatBuffer velBuffer;
 

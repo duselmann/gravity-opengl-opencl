@@ -12,7 +12,7 @@ public class StarStreams2 extends StarStreams {
 	public StarStreams2() {
 		log.info("Scenario Initialization");
 
-		setAlpha(.1f);
+		setAlpha(.25f);
 		ratio = 0.7f;
         Vector3f andromedaVel = new Vector3f(0,0,0);
         Vector3f milkywayVel = new Vector3f(0,0,-7);
