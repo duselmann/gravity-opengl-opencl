@@ -12,7 +12,7 @@ public class Galaxies2a extends Galaxies2 {
 	public Galaxies2a() {
 		log.info("Scenario Initialization");
 
-		setAlpha(.1f);
+		setAlpha(.33f);
 		ratio = 0.6f;
         Vector3f coreVel1 = new Vector3f(0,0,0);
         Vector3f coreVel2 = new Vector3f(0,5,0);
