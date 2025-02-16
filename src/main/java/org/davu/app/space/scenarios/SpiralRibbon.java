@@ -13,15 +13,15 @@ import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
 
-public class SprialRibbon extends Particles {
-	private static final Logger log = LogManager.getLogger(SprialRibbon.class);
+public class SpiralRibbon extends Particles {
+	private static final Logger log = LogManager.getLogger(SpiralRibbon.class);
 
-	int NumParticles = 4_096*8; // 2x the particles of my original
+	int NumParticles = 4_096*2; // 2x the particles of my original
 
 	private FloatBuffer velBuffer;
 
 
-	public SprialRibbon() {
+	public SpiralRibbon() {
 		setParticleCount(NumParticles);
 		setMassiveCount(NumParticles/6);
 		setAlpha(0.8f);

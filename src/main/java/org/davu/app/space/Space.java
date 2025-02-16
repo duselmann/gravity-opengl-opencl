@@ -21,6 +21,8 @@ import java.io.IOException;
 public class Space implements Runnable {
 	private long lastTime = System.nanoTime();
 
+	private int width = 5100;
+	private int height = 1450;
 	private Window window;
 	private Controls controls;
 	private ViewMatrix view;
@@ -32,7 +34,7 @@ public class Space implements Runnable {
 
 
 	public Space(String scenario) {
-        view = new ViewMatrix(800,600);
+        view = new ViewMatrix(width, height);
         glasses3d = new Glasses3D(view);
 		particles = new ScenarioManager().build(scenario, glasses3d);
 	}
@@ -42,7 +44,7 @@ public class Space implements Runnable {
             throw new IllegalStateException("Unable to initialize GLFW");
         }
 
-        window = new Window().init();
+        window = new Window(width, height).init();
         view.updateAspect(window.getWidth(), window.getHeight());
 
         GLCapabilities caps = GL.createCapabilities(); // connects lwjgl to the native libraries
@@ -113,7 +115,7 @@ public class Space implements Runnable {
 	private void initComputeThread() {
 		Thread compute = new Thread(() -> {
 			try {
-				Thread.sleep(5000);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

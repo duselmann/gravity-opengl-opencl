@@ -4,10 +4,10 @@ package org.davu.opencl.advanced;
 import org.dynamics.math.Vector;
 
 
-public class Orbitally extends Gravity {
+public class Expansion extends Gravity {
 
     public static void main(String[] args) throws Exception {
-        Orbitally gravity = new Orbitally();
+        Expansion gravity = new Expansion();
         gravity.createWindow();
         gravity.compute();
     }

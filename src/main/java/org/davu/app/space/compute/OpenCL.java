@@ -52,9 +52,9 @@ public class OpenCL implements AutoCloseable {
     public void init(long glWindow) throws IOException {
         try {
         	// TODO push to NVIDIA but GL does not have the same mechanism.
-            log.info("CL GPU Device Acquisition: {}", INTEL);
+            log.info("CL GPU Device Acquisition: {}", NVIDIA);
         	// Currently assigned to INTEL because GL pushes there
-            PlatformDevice platformDevice = getGPU(INTEL);
+            PlatformDevice platformDevice = getGPU(NVIDIA);
             displayInfo(platformDevice, false);
             platformId = platformDevice.platform;
             PointerBuffer device = platformDevice.device;

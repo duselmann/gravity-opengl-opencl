@@ -34,7 +34,7 @@ public class Glasses3D {
 
 	    if (is3D()) {
 			mvpMatrix.translate(side.mul(-1.0f));
-			renderer.accept(cyan(), mvpMatrix);
+			renderer.accept(green(), mvpMatrix);
 	    }
 	}
 

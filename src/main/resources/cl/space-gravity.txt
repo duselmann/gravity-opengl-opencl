@@ -21,6 +21,10 @@ float3 attraction(float3 accumAccel, float3 body1, float mass, float3 body2) {
     r.y = body1.y - body2.y;
     r.z = body1.z - body2.z;
 
+    // closest approach
+    if (r.x == 0 && r.y == 0 && r.z == 0) {
+        return accumAccel;
+    }
     float rSqrd = r.x*r.x + r.y*r.y + r.z*r.z;
     // closest approach maybe closer like 9 maybe
     if (rSqrd < 16) {
@@ -74,7 +78,7 @@ kernel void gravityDarkMatter(
     float  dmRadius   = distance((float3)(position.x,position.y,position.z), 
                                  (float3)(dmCenter.x,dmCenter.y,dmCenter.z));
            dmRadius   = dmRadius*dmRadius*dmRadius;
-           dmRadius   = (dmRadius<0) ?-dmRadius :dmRadius;
+           //dmRadius   = (dmRadius<0) ?-dmRadius :dmRadius;
     // dark matter attraction is a diffuse volume
     float dmVolume = dmCenter.w;
     if (dmRadius<dmVolume) {

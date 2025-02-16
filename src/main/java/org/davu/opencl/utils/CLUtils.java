@@ -340,7 +340,7 @@ public class CLUtils {
      *       See writeFloatBuffer for data transfer.
      * @param context the context to create the data allocation
      * @param flags   CL flags to control the state of the buffer
-     * @param floatBuffer the values to place in the context allocation
+     * @param buffer the values to place in the context allocation
      * @return a memory address for the new buffer
      */
     public static long createMemoryBuffer(long context, int flags, Buffer buffer) {
@@ -378,7 +378,7 @@ public class CLUtils {
      * @param queue   the queue to place the memory buffer for writing
      * @param context the context to create the data allocation
      * @param flags   CL flags to control the state of the buffer
-     * @param floatBuffer the values to place in the context allocation
+     * @param buffer the values to place in the context allocation
      * @return a memory address for the new buffer
      */
     public static long writeBuffer(long queue, long context, int flags, Buffer buffer) {

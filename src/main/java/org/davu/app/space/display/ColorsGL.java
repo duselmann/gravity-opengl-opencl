@@ -19,6 +19,7 @@ public class ColorsGL {
 	private static final FloatBuffer elcBuffer;
 	private static final FloatBuffer bluBuffer;
 	private static final FloatBuffer purBuffer;
+	private static final FloatBuffer bluBuffer3D;
 
 	static {
 		magBuffer = make(1f,0f,1f);
@@ -29,6 +30,8 @@ public class ColorsGL {
 		elcBuffer = make(0f,0.68f,1f);
 		bluBuffer = make(0f,0f,1f);
 		purBuffer = make(0.33f,0f,1f);
+
+		bluBuffer3D = make(0f,0f,0.667f);
 	}
 
 	protected static FloatBuffer make(float r, float g, float b) {
@@ -58,6 +61,9 @@ public class ColorsGL {
 	}
 	public static FloatBuffer blue() {
 		return bluBuffer;
+	}
+	public static FloatBuffer blue3D() {
+		return bluBuffer3D;
 	}
 	public static FloatBuffer purple() {
 		return purBuffer;

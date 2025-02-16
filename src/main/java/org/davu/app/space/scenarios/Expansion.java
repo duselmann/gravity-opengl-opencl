@@ -12,13 +12,13 @@ import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
 
-public class Orbitally extends Particles {
-	private static final Logger log = LogManager.getLogger(Orbitally.class);
+public class Expansion extends Particles {
+	private static final Logger log = LogManager.getLogger(Expansion.class);
 
-	int NumParticles = 1_048_576; // 2x the particles of my original
+	int NumParticles = 1_048_576;
 
 
-	public Orbitally() {
+	public Expansion() {
 		setParticleCount(NumParticles*4);
 		setMassiveCount(1_024);
 		setAlpha(0.05f);
@@ -63,6 +63,9 @@ public class Orbitally extends Particles {
 
             Vector3f velv = new Vector3f(0,0,1).cross(pos).normalize().mul(vr);
 
+            pos.mul(.1f);
+            velv.add(pos);
+
             velBuffer.put(velv.x).put(velv.y).put(velv.z);
             velBuffer.put((float)(600*massBase*Math.random())); // mass
         }
@@ -70,3 +73,4 @@ public class Orbitally extends Particles {
     	return velBuffer;
 	}
 }
+// Near as I can tell, the $100 discount promotion for opening the account was not applied

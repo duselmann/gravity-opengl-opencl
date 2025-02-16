@@ -11,9 +11,9 @@ public class Galaxies2 extends Galaxies {
 	public Galaxies2() {
 		log.info("Scenario Initialization");
 
-		setAlpha(.05f);
+		setAlpha(.33f);
 		coreMass = new float[] {coreMassBase*10f, coreMassBase/10f};
-		maxRadius = new float[] {400, 100};
+		maxRadius = new float[] {400, 300};
 		ratio = 0.8f;
 	}
 

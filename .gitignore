@@ -2,3 +2,10 @@ target/
 .settings/
 /.idea/
 dependency-reduced-pom.xml
+Gravity-clgl/
+lib/
+libs/
+*.iml
+*.eml
+*.iws
+*.ipr

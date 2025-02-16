@@ -19,8 +19,12 @@ float3 body2bodyAttract(float3 accumAccel, float4 body1, float4 body2) {
     r.y = body1.y - body2.y;
     r.z = body1.z - body2.z;
 
-    float rSqrd = r.x*r.x + r.y*r.y + r.z*r.z;
     // closest approach
+    if (r.x == 0 && r.y == 0 && r.z == 0) {
+        return accumAccel;
+    }
+    float rSqrd = r.x*r.x + r.y*r.y + r.z*r.z;
+    // closest approach maybe closer like 9 maybe
     if (rSqrd < 16) {
         rSqrd = 16;
     }
@@ -76,6 +80,7 @@ void updateState(
     velocity.y += acceleration.y * dt;
     velocity.z += acceleration.z * dt;
 
+    // update position with current velocity
     position.x += velocity.x * dt;
     position.y += velocity.y * dt;
     position.z += velocity.z * dt;

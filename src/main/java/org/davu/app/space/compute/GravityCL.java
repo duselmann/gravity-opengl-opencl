@@ -123,8 +123,8 @@ public class GravityCL {
         log.info("iteration - commence");
         if (running) {
             int result = 0;
-//        	result = clEnqueueAcquireGLObjects(queue, positionMem, null, null);
-//        	isSuccess(result);
+          	result = clEnqueueAcquireGLObjects(queue, positionMem, null, null);
+          	isSuccess(result);
             int arg = 0;
             pushKernelStackPointer(kernel, arg++, positionMem);  // positions GL handle arg
             pushKernelStackPointer(kernel, arg++, velocityMem);  // velocities CL handle arg
@@ -146,8 +146,8 @@ public class GravityCL {
             int localRows = 1;
             pushKernelToQueue(queue, kernel, globalCols, globalRows, localCols, localRows);
 
-//        	result = clEnqueueReleaseGLObjects(queue, positionMem, null, null);
-//        	isSuccess(result);
+          	result = clEnqueueReleaseGLObjects(queue, positionMem, null, null);
+          	isSuccess(result);
             waitForQueue(queue); // NOTE: This waits for the computer and buffer transfer to finish
 
         }

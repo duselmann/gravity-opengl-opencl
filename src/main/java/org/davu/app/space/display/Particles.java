@@ -125,10 +125,7 @@ public class Particles implements VaoVboClient {
 		return numParticles;
 	}
 	public void setMassiveCount(int count) {
-		if (count > numParticles) {
-			count = numParticles;
-		}
-		this.massiveCount = count;
+		this.massiveCount = count>numParticles? numParticles: count;
 	}
 	public int getMassiveCount() {
 		return massiveCount;
