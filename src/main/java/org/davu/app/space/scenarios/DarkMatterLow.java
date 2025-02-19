@@ -20,7 +20,7 @@ public class DarkMatterLow extends Galaxy {
 	public void initDarkMater() {
 		log.info("Scenario LOW Dark Matter << visible");
         // init properties - Dark Matter
-		dmVolume = /* MAX_RADIUS*2; */  (float) java.lang.Math.pow(MAX_RADIUS * 1.5, 3);
+		dmVolume = (float) java.lang.Math.pow(MAX_RADIUS * 1.5, 3);
         dmMass   = CORE_MASS_BASE * 2f;
         dmCenter = new Vector3f();
 	}

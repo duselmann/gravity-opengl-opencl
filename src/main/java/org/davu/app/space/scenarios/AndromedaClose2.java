@@ -27,7 +27,6 @@ public class AndromedaClose2 extends Galaxies2 {
 		setAlpha(.6f);
 
         Vector3f andromedaVel = new Vector3f(0,0,0);
-//      Vector3f milkywayVel = new Vector3f(12f,0,-9);
         massBase = 1f;
         Vector3f milkywayVel = new Vector3f(5f,0,-5);
         coreVel = new Vector3f[] {andromedaVel, milkywayVel};
@@ -45,7 +44,6 @@ public class AndromedaClose2 extends Galaxies2 {
 		log.info("init particle data");
         velBase  = 1f;
     	Vector3f coreDist = new Vector3f(200,0,500);
-//    	Vector3f[] coreDist = new Vector3f[] {new Vector3f(500,0,250), new Vector3f(100,0,250)};
 
         // set the core locations in the first two mass registers
     	Vector3f pos = new Vector3f();
@@ -106,7 +104,6 @@ public class AndromedaClose2 extends Galaxies2 {
             pos.cross(velNormal, velGalactic).normalize().mul(vr);  // galactic radial velocity vector from blackhole
 
             float leftRightRatio = leftRight==1? ratio: 1f-ratio;
-//            System.out.println(leftRightRatio);
             float massOfAllStars = leftRightRatio*getParticleCount()*massBase;// /2f;
             float galaxyArea = (float)Math.PI * galaxyRadius * galaxyRadius;
             float starInnerArea = (float)Math.PI * r*r;
@@ -116,11 +113,6 @@ public class AndromedaClose2 extends Galaxies2 {
             Vector3f velStars = new Vector3f();
             pos.cross(velNormal, velStars).normalize().mul(vr);  // galactic radial velocity vector from stars
 
-//            System.out.println(velGalactic.lengthSquared() / velStars.length());
-//            System.out.println(velGalactic.lengthSquared() / velDark.length());
-
-//        	velGalactic.add(velStars); // add Glalactic orbit and Stars orbit
-//        	velGalactic.add(velDark);  // add in the dark velocity
         	velGalactic.add(coreVel[leftRight]); // add in galaxy core velocity
 
         	Vector3f velv = velGalactic;

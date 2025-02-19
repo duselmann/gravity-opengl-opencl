@@ -38,7 +38,7 @@ public class Galaxy extends Galaxies {
 	public void initDarkMater() {
         // TODO always have DM but default low influence
         // init properties - Dark Matter
-		dmVolume = /* MAX_RADIUS*2; */  (float) java.lang.Math.pow(MAX_RADIUS * 1.5, 3);
+		dmVolume = (float) java.lang.Math.pow(MAX_RADIUS * 1.5, 3);
         dmMass   = CORE_MASS_BASE * 20f;
         dmCenter = new Vector3f();
 	}
@@ -90,10 +90,7 @@ public class Galaxy extends Galaxies {
             Vector3f velNormal = coreNormal[leftRight];
 
             // calculate the velocity with respect to the dark matter
-//    		r  = pos.length();                     // distance from dark center
             float vr = velBase; // * Math.sqrt(darkMass/pos.length()); // radial velocity magnitude
-//            Vector3f darkVel = new Vector3f();
-//        	velNormal.cross(pos, darkVel).normalize().mul(vr);     // radial velocity vector
 
         	// calculate the velocity with respect to the galaxy center
             r  = pos.length();           // distance from galaxy center
@@ -106,7 +103,6 @@ public class Galaxy extends Galaxies {
             Vector3f velv = new Vector3f();
             pos.cross(velNormal, velv).normalize().mul(vr);  // galactic radial velocity vector
 
-//        	velv.add(darkVel); // add in the dark velocity
         	velv.add(coreVel[leftRight]); // add in galactic velocity
 
             velBuffer.put(velv.x).put(velv.y).put(velv.z);  // register particle velocity

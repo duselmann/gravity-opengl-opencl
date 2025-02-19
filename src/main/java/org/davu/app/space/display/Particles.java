@@ -20,10 +20,7 @@ public class Particles implements VaoVboClient {
 
 	// Other particle counts
 //  int NumParticles = 1_048_576; // (2^20) green-red 3D does not work well with this many points
-//	int NumParticles = 65_536; // seems to be the limit of 3D red-green density but alpha must be 1
 	int NumParticles = 4_096*2; // 2x the particles of my original
-//	int NumParticles = 1024;
-//	int NumParticles = 256;
 
     protected  float massBase = 5f;
     protected  float velBase  = 7f;
@@ -166,19 +163,11 @@ public class Particles implements VaoVboClient {
     	float span = 300f;
 
     	for (int v=0; v<numParticles; v++) {
-//    		int tries = 0;
-//    		boolean generate = true;
-//    		while (generate && tries++<10) {
     		Vector3f vertex = new Vector3f();
     		vertex.x = (float)(Math.random() * span)-span/2;
     		vertex.y = (float)(Math.random() * span)-span/2;
     		vertex.z = ((span/numParticles * v - span/2));
-//	    		generate      = checkNearPoint(64, v, vertices);
-//    		}
     		manager.addVertex(vertex);
-//    		if (v % 100_000 == 0) {
-//    			System.out.println(v);
-//    		}
     	}
     	velocities = initVelocities(manager);
 	}
@@ -192,7 +181,6 @@ public class Particles implements VaoVboClient {
     	Vector3f cross    = new Vector3f();
     	for (; v<numParticles; v++) {
         	Vector3f particle = manager.getVertex(this, v);
-    		//particle.set(vertices[v*3+0],vertices[v*3+1],vertices[v*3+2]);
 
         	float dist = particle.distance(dmCenter);
     		float mass = dmMass * dist*dist*dist/dmVolume;

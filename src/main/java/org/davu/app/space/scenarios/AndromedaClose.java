@@ -25,16 +25,6 @@ public class AndromedaClose extends Galaxies2 {
 		setMassiveCount(NumParticles);
 
 		setAlpha(.6f);
-//        Vector3f andromedaVel = new Vector3f(-3,0,0);
-//        Vector3f milkywayVel = new Vector3f(14f,0,0);
-//        coreVel = new Vector3f[] {andromedaVel, milkywayVel};
-
-//        float andromedaMass = coreMassBase*99f;
-//        float milkywayMass = coreMassBase*4f;
-//		coreMass = new float[] {andromedaMass, milkywayMass};
-//
-//		maxRadius = new float[] {440, 200};
-//		ratio = 0.7f;
 		massBase = 0.1f;
 
         Vector3f andromedaVel = new Vector3f(-3,0,0);
@@ -54,7 +44,6 @@ public class AndromedaClose extends Galaxies2 {
 		log.info("init particle data");
         velBase  = 1f;
     	Vector3f coreDist = new Vector3f(200,0,500);
-//    	Vector3f[] coreDist = new Vector3f[] {new Vector3f(500,0,250), new Vector3f(100,0,250)};
 
         // set the core locations in the first two mass registers
     	Vector3f pos = new Vector3f();
@@ -115,16 +104,10 @@ public class AndromedaClose extends Galaxies2 {
             pos.cross(velNormal, velGalactic).normalize().mul(vr);  // galactic radial velocity vector from blackhole
 
             float leftRightRatio = leftRight==1? ratio: 1f-ratio;
-//            System.out.println(leftRightRatio);
             vr = Math.sqrt(leftRightRatio*getParticleCount()*massBase*r/galaxyRadius/galaxyRadius/2f); // galactic radial velocity from other stars   r r / rm rm
             Vector3f velStars = new Vector3f();
             pos.cross(velNormal, velStars).normalize().mul(vr);  // galactic radial velocity vector from stars
 
-//            System.out.println(velGalactic.lengthSquared() / velStars.length());
-//            System.out.println(velGalactic.lengthSquared() / velDark.length());
-
-//        	velGalactic.add(velStars); // add Glalactic orbit and Stars orbit
-//        	velGalactic.add(velDark);  // add in the dark velocity
         	velGalactic.add(coreVel[leftRight]); // add in galaxy core velocity
 
         	Vector3f velv = velGalactic;

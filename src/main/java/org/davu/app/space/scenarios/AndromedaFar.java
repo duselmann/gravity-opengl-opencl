@@ -31,7 +31,6 @@ public class AndromedaFar extends Galaxies2 {
 
 		maxRadius = new float[] {440, 200};
 		ratio = 0.7f;
-//		massBase = 0.2f;
 	}
 
     @Override
@@ -39,7 +38,6 @@ public class AndromedaFar extends Galaxies2 {
 		log.info("init particle data");
         velBase  = 1f;
     	Vector3f coreDist = new Vector3f(200,0,1500);
-//    	Vector3f[] coreDist = new Vector3f[] {new Vector3f(500,0,250), new Vector3f(100,0,250)};
 
         // set the core locations in the first two mass registers
     	Vector3f pos = new Vector3f();

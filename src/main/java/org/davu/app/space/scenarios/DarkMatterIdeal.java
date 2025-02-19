@@ -19,7 +19,7 @@ public class DarkMatterIdeal extends Galaxy {
 	public void initDarkMater() {
 		log.info("Scenario Ideal Dark Matter 10-20 x visible");
         // init properties - Dark Matter
-		dmVolume = /* MAX_RADIUS*2; */  (float) java.lang.Math.pow(MAX_RADIUS * 1.5, 3);
+		dmVolume = (float) java.lang.Math.pow(MAX_RADIUS * 1.5, 3);
         dmMass   = CORE_MASS_BASE * 20f;
         dmCenter = new Vector3f();
 	}

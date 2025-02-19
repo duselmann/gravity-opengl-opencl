@@ -8,6 +8,7 @@ public class ScenarioManager {
 	protected final String packageName = "org.davu.app.space.scenarios.";
 
 
+
 	public Particles build(String className, Glasses3D glasses) {
 		Class<? extends Particles> scenario = getClass(className);
 
@@ -21,7 +22,7 @@ public class ScenarioManager {
 
 		Particles particles;
 		try {
-			particles = scenario.newInstance();
+			particles = scenario.getDeclaredConstructor().newInstance();
 			particles.setGlasses(glasses);
 		} catch (Throwable t) {
 			throw new RuntimeException("Failed to create scenario: " + className, t);

@@ -67,8 +67,6 @@ public class Universe3D extends Particles {
             velBuffer.put(vel.x).put(vel.y).put(vel.z);
             velBuffer.put((float)(massBase*Math.random())); // mass
         }
-//    	System.out.println(maxMagnitude);
-//    	System.out.println(minMagnitude);
     	velBuffer.flip();
     	return velBuffer;
 	}
