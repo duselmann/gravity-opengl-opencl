@@ -20,24 +20,24 @@ public class AndromedaClose2 extends Galaxies2 {
 		log.info("Scenario Initialization");
 
 		coreMassBase  = 5000f;
-	    NumParticles = (int)(1_048_576/16.0/2);
+	    NumParticles = 1_048_576/16;
 	    setParticleCount(NumParticles);
 		setMassiveCount(NumParticles);
 
-		setAlpha(.9f);
-		ratio = 0.7f;
+		setAlpha(.6f);
+
         Vector3f andromedaVel = new Vector3f(0,0,0);
 //      Vector3f milkywayVel = new Vector3f(12f,0,-9);
-      Vector3f milkywayVel = new Vector3f(5f,0,-5);
+        massBase = 1f;
+        Vector3f milkywayVel = new Vector3f(5f,0,-5);
         coreVel = new Vector3f[] {andromedaVel, milkywayVel};
 
         float andromedaMass = coreMassBase*99f;
-        float milkywayMass = coreMassBase*4f;
+        float milkywayMass = coreMassBase *4f;
 		coreMass = new float[] {andromedaMass, milkywayMass};
 
 		maxRadius = new float[] {440, 200};
 		ratio = 0.7f;
-		massBase = 1f;
 	}
 
     @Override
@@ -116,17 +116,16 @@ public class AndromedaClose2 extends Galaxies2 {
             Vector3f velStars = new Vector3f();
             pos.cross(velNormal, velStars).normalize().mul(vr);  // galactic radial velocity vector from stars
 
-            System.out.println(velGalactic.lengthSquared() / velStars.length());
+//            System.out.println(velGalactic.lengthSquared() / velStars.length());
 //            System.out.println(velGalactic.lengthSquared() / velDark.length());
 
-        	velGalactic.add(velStars); // add Glalactic orbit and Stars orbit
+//        	velGalactic.add(velStars); // add Glalactic orbit and Stars orbit
 //        	velGalactic.add(velDark);  // add in the dark velocity
         	velGalactic.add(coreVel[leftRight]); // add in galaxy core velocity
 
         	Vector3f velv = velGalactic;
             velBuffer.put(velv.x).put(velv.y).put(velv.z);  // register particle velocity
-//            velBuffer.put((float)(massBase*Math.random())); // mass of each particle
-            velBuffer.put(massBase); // mass of each particle
+            velBuffer.put((float)(massBase*Math.random())); // mass of each particle
 
             leftRight = leftRight * 2 - 1;
             pos.x = leftRight*coreDist.x + pos.x;

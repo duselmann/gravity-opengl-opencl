@@ -20,7 +20,7 @@ public class AndromedaClose extends Galaxies2 {
 		log.info("Scenario Initialization");
 
 		coreMassBase  = 5000f;
-	    NumParticles = (1_048_576/4);
+	    NumParticles = 1_048_576/16;
 	    setParticleCount(NumParticles);
 		setMassiveCount(NumParticles);
 
@@ -112,7 +112,7 @@ public class AndromedaClose extends Galaxies2 {
     		r  = pos.length();           // distance from galaxy center
             vr = velBase * Math.sqrt(coreMass[leftRight]/r); // galactic radial velocity magnitude
             Vector3f velGalactic = new Vector3f();
-            pos.cross(velNormal, velGalactic).normalize().mul(vr);  // galactic radial velocity vector
+            pos.cross(velNormal, velGalactic).normalize().mul(vr);  // galactic radial velocity vector from blackhole
 
             float leftRightRatio = leftRight==1? ratio: 1f-ratio;
 //            System.out.println(leftRightRatio);
