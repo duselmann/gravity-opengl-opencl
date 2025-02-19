@@ -11,6 +11,7 @@ public class DarkEnergyHigh extends DarkEnergyIdeal {
 
 	@Override
 	protected void addDarkEnergy(Vector3f pos, Vector3f velv) {
+		log.info("add dark energy");;
 		pos.mul(.5f);
 		velv.add(pos);
 	}

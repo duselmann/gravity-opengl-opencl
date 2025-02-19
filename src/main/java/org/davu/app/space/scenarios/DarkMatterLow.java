@@ -1,14 +1,10 @@
 // Copyright (c) 2022 David Uselmann
 package org.davu.app.space.scenarios;
 
-import java.nio.FloatBuffer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.davu.app.space.display.VaoVboManager;
-import org.joml.Math;
 import org.joml.Vector3f;
-import org.lwjgl.BufferUtils;
 
 
 public class DarkMatterLow extends Galaxy {

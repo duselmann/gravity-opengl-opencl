@@ -11,6 +11,7 @@ public class DarkEnergyLow extends DarkEnergyIdeal {
 
 	@Override
 	protected void addDarkEnergy(Vector3f pos, Vector3f velv) {
-		// none for low configuration
+		// none - for low configuration
+		log.info("No dark energy");;
 	}
 }
