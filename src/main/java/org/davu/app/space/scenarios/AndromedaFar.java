@@ -15,18 +15,19 @@ import org.lwjgl.BufferUtils;
 public class AndromedaFar extends Galaxies2 {
 	private static final Logger log = LogManager.getLogger(AndromedaFar.class);
 
+
 	public AndromedaFar() {
 		log.info("Scenario Initialization");
 
 
 		setAlpha(.5f);
-		ratio = 0.7f;
+
         Vector3f andromedaVel = new Vector3f(0,0,0);
         Vector3f milkywayVel = new Vector3f(3f,0,-12);
         coreVel = new Vector3f[] {andromedaVel, milkywayVel};
 
         float andromedaMass = coreMassBase*99f;
-        float milkywayMass = coreMassBase*4f;
+        float milkywayMass  = coreMassBase *4f;
 		coreMass = new float[] {andromedaMass, milkywayMass};
 
 		maxRadius = new float[] {440, 200};
@@ -47,7 +48,7 @@ public class AndromedaFar extends Galaxies2 {
         manager.addVertex(pos);
         manager.addVertex(coreDist);
 
-        FloatBuffer velBuffer   = BufferUtils.createFloatBuffer(4*getParticleCount());
+        FloatBuffer velBuffer = BufferUtils.createFloatBuffer(4*getParticleCount());
         Vector3f[] coreNormal = new Vector3f[] {new Vector3f(0,0,1), new Vector3f(1,0,0)};
 
         Vector3f coreVel1 = coreVel[0];
@@ -85,16 +86,16 @@ public class AndromedaFar extends Galaxies2 {
             float innerVol = r*r*r;                      // volume of dark matter
             float darkMass = dmMass * innerVol/dmVolume; // inner dark matter mass
             float vr = velBase * Math.sqrt(darkMass/pos.length()); // radial velocity magnitude
-            Vector3f darkVel = new Vector3f();
-        	velNormal.cross(pos, darkVel).normalize().mul(vr);     // radial velocity vector
+            Vector3f velDark = new Vector3f();
+        	velNormal.cross(pos, velDark).normalize().mul(vr);     // radial velocity vector
 
         	// calculate the velocity with respect to the galaxy center
     		r  = pos.length();           // distance from galaxy center
             vr = velBase * Math.sqrt(coreMass[leftRight]/r); // galactic radial velocity magnitude
             Vector3f velv = new Vector3f();
-            pos.cross(velNormal, velv).normalize().mul(vr);  // galactic radial velocity vector
+            pos.cross(velNormal, velv).normalize().mul(vr);  // galactic radial velocity vector from stars
 
-        	velv.add(darkVel); // add in the dark velocity
+        	velv.add(velDark); // add in the dark velocity
         	velv.add(coreVel[leftRight]); // add in galactic velocity
 
             velBuffer.put(velv.x).put(velv.y).put(velv.z);  // register particle velocity
@@ -111,7 +112,7 @@ public class AndromedaFar extends Galaxies2 {
         velocities = velBuffer;
 	}
 
-	@Override
+    @Override
 	public void setGlasses(Glasses3D glasses) {
 		super.setGlasses(glasses);
 		glasses3D.setGlasses();

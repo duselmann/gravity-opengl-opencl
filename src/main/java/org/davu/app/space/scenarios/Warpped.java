@@ -40,14 +40,14 @@ public class Warpped extends Galaxies2 {
     	Vector3f coreDist = new Vector3f(200,0,1500);
 
         // set the core locations in the first two mass registers
-    	Vector3f pos = new Vector3f();
+        Vector3f pos = new Vector3f();
         pos.x = -coreDist.x;
         pos.y = -coreDist.y;
         pos.z = -coreDist.z;
         manager.addVertex(pos);
         manager.addVertex(coreDist);
 
-        FloatBuffer velBuffer   = BufferUtils.createFloatBuffer(4*getParticleCount());
+        FloatBuffer velBuffer = BufferUtils.createFloatBuffer(4*getParticleCount());
         Vector3f[] coreNormal = new Vector3f[] {new Vector3f(0,0,1), new Vector3f(1,0,0)};
 
         Vector3f coreVel1 = coreVel[0];
@@ -85,16 +85,16 @@ public class Warpped extends Galaxies2 {
             float innerVol = r*r*r;                      // volume of dark matter
             float darkMass = dmMass * innerVol/dmVolume; // inner dark matter mass
             float vr = velBase * Math.sqrt(darkMass/pos.length()); // radial velocity magnitude
-            Vector3f darkVel = new Vector3f();
-        	velNormal.cross(pos, darkVel).normalize().mul(vr);     // radial velocity vector
+            Vector3f velDark = new Vector3f();
+        	velNormal.cross(pos, velDark).normalize().mul(vr);     // radial velocity vector
 
         	// calculate the velocity with respect to the galaxy center
     		r  = pos.length();           // distance from galaxy center
             vr = velBase * Math.sqrt(coreMass[leftRight]/r); // galactic radial velocity magnitude
             Vector3f velv = new Vector3f();
-            pos.cross(velNormal, velv).normalize().mul(vr);  // galactic radial velocity vector
+            pos.cross(velNormal, velv).normalize().mul(vr);  // galactic radial velocity vector from stars
 
-        	velv.add(darkVel); // add in the dark velocity
+        	velv.add(velDark); // add in the dark velocity
         	velv.add(coreVel[leftRight]); // add in galactic velocity
 
             velBuffer.put(velv.x).put(velv.y).put(velv.z);  // register particle velocity

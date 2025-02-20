@@ -44,18 +44,18 @@ public class Galaxy extends Galaxies {
 	}
 
     @Override
-    public void makeVertices(VaoVboManager manager) {
+	public void makeVertices(VaoVboManager manager) {
 		log.info("init particle data");
         velBase  = 1f;
         // set the core locations in the first two mass registers
-    	Vector3f pos = new Vector3f();
+        Vector3f pos = new Vector3f();
         pos.x = -coreDist.x;
         pos.y = -coreDist.y;
         pos.z = -coreDist.z;
         manager.addVertex(pos);
         manager.addVertex(coreDist);
 
-        FloatBuffer velBuffer   = BufferUtils.createFloatBuffer(4*getParticleCount());
+        FloatBuffer velBuffer = BufferUtils.createFloatBuffer(4*getParticleCount());
         Vector3f[] coreNormal = new Vector3f[] {new Vector3f(0,0,1), new Vector3f(1,0,0)};
 
         Vector3f coreVel1 = coreVel[0];
@@ -101,7 +101,7 @@ public class Galaxy extends Galaxies {
             float totalMass = darkMass + starsMass + coreMass[leftRight];
             vr = velBase * Math.sqrt(totalMass/r); // galactic radial velocity magnitude
             Vector3f velv = new Vector3f();
-            pos.cross(velNormal, velv).normalize().mul(vr);  // galactic radial velocity vector
+            pos.cross(velNormal, velv).normalize().mul(vr);  // galactic radial velocity vector from stars
 
         	velv.add(coreVel[leftRight]); // add in galactic velocity
 

@@ -38,6 +38,7 @@ public class Galactic extends Particles {
             aa = (float)(Math.random()*Math.PI*2);
             x1 = (Math.cos(aa));
             y1 = (Math.sin(aa));
+    		// get position of particle
 
             pos.x = r*x1;
             pos.y = r*y1;
@@ -66,9 +67,12 @@ public class Galactic extends Particles {
 
             Vector3f velv = new Vector3f(0,0,1).cross(pos).normalize().mul(vr);
 
-            velBuffer.put(velv.x).put(velv.y).put(velv.z);
-            velBuffer.put((float)(massBase*Math.random())); // mass
+
+            velBuffer.put(velv.x).put(velv.y).put(velv.z);  // register particle velocity
+            velBuffer.put((float)(massBase*Math.random())); // mass of each particle
+
         }
+
     	velBuffer.flip();
     	return velBuffer;
 	}

@@ -28,8 +28,9 @@ public class Galaxies extends Particles {
 
 		setParticleCount(NumParticles);
 		setMassiveCount(NumParticles);
-		setAlpha(.15f);
+
 		setAlpha(.5f);
+
         coreMass = new float[] {coreMassBase, coreMassBase};
 		maxRadius = new float[] {350, 350};
 		ratio = 0.5f;
@@ -44,14 +45,14 @@ public class Galaxies extends Particles {
 		log.info("init particle data");
         velBase  = 1f;
         // set the core locations in the first two mass registers
-    	Vector3f pos = new Vector3f();
+        Vector3f pos = new Vector3f();
         pos.x = -coreDist.x;
         pos.y = -coreDist.y;
         pos.z = -coreDist.z;
         manager.addVertex(pos);
         manager.addVertex(coreDist);
 
-        FloatBuffer velBuffer   = BufferUtils.createFloatBuffer(4*getParticleCount());
+        FloatBuffer velBuffer = BufferUtils.createFloatBuffer(4*getParticleCount());
         Vector3f[] coreNormal = new Vector3f[] {new Vector3f(0,0,1), new Vector3f(1,0,0)};
 
         Vector3f coreVel1 = coreVel[0];
@@ -89,7 +90,7 @@ public class Galaxies extends Particles {
             float vr = velBase; // * Math.sqrt(darkMass/pos.length()); // radial velocity magnitude
 
         	// calculate the velocity with respect to the galaxy center
-            r  = pos.length();           // distance from galaxy center
+    		r  = pos.length();                     // distance from dark center
             float innerVol = r*r*r;                      // volume of dark matter
             float darkMass = dmMass * innerVol/dmVolume; // inner dark matter mass
             float innerArea = r*r;                      // volume of dark matter
@@ -97,7 +98,7 @@ public class Galaxies extends Particles {
             float totalMass = darkMass + starsMass + coreMass[leftRight];
             vr = velBase * Math.sqrt(totalMass/r); // galactic radial velocity magnitude
             Vector3f velv = new Vector3f();
-            pos.cross(velNormal, velv).normalize().mul(vr);  // galactic radial velocity vector
+            pos.cross(velNormal, velv).normalize().mul(vr);  // galactic radial velocity vector from stars
 
         	velv.add(coreVel[leftRight]); // add in galactic velocity
 
@@ -113,7 +114,7 @@ public class Galaxies extends Particles {
 
         velBuffer.flip();
         velocities = velBuffer;
-	}
+    }
 
     @Override
 	public FloatBuffer  initVelocities(VaoVboManager manager) {

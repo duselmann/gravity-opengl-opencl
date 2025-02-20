@@ -24,7 +24,7 @@ public class AndromedaClose extends Galaxies2 {
 	    setParticleCount(NumParticles);
 		setMassiveCount(NumParticles);
 
-		setAlpha(.6f);
+		setAlpha(.5f);
 		massBase = 0.1f;
 
         Vector3f andromedaVel = new Vector3f(-3,0,0);
@@ -89,8 +89,8 @@ public class AndromedaClose extends Galaxies2 {
             // normal to that positions galaxy
             Vector3f velNormal = coreNormal[leftRight];
 
-            // calculate the velocity with respect to the dark matter
-    		r  = pos.length();                     // distance from dark center
+        	// calculate the velocity with respect to the galaxy center
+            r  = pos.length();           // distance from galaxy center
             float innerVol = r*r*r;                      // volume of dark matter
             float darkMass = dmMass * innerVol/dmVolume; // inner dark matter mass
             float vr = velBase * Math.sqrt(darkMass/pos.length()); // radial velocity magnitude
@@ -101,14 +101,14 @@ public class AndromedaClose extends Galaxies2 {
     		r  = pos.length();           // distance from galaxy center
             vr = velBase * Math.sqrt(coreMass[leftRight]/r); // galactic radial velocity magnitude
             Vector3f velGalactic = new Vector3f();
-            pos.cross(velNormal, velGalactic).normalize().mul(vr);  // galactic radial velocity vector from blackhole
+            pos.cross(velNormal, velGalactic).normalize().mul(vr);  // galactic radial velocity vector from black hole
 
             float leftRightRatio = leftRight==1? ratio: 1f-ratio;
             vr = Math.sqrt(leftRightRatio*getParticleCount()*massBase*r/galaxyRadius/galaxyRadius/2f); // galactic radial velocity from other stars   r r / rm rm
             Vector3f velStars = new Vector3f();
             pos.cross(velNormal, velStars).normalize().mul(vr);  // galactic radial velocity vector from stars
 
-        	velGalactic.add(coreVel[leftRight]); // add in galaxy core velocity
+        	velGalactic.add(coreVel[leftRight]); // add in galactic velocity
 
         	Vector3f velv = velGalactic;
             velBuffer.put(velv.x).put(velv.y).put(velv.z);  // register particle velocity
@@ -125,7 +125,7 @@ public class AndromedaClose extends Galaxies2 {
         velocities = velBuffer;
 	}
 
-	@Override
+    @Override
 	public void setGlasses(Glasses3D glasses) {
 		super.setGlasses(glasses);
 		glasses3D.setGlasses();
@@ -139,5 +139,4 @@ public class AndromedaClose extends Galaxies2 {
         dmMass   = coreMassBase*104*1000000000;
         dmCenter = new Vector3f();
 	}
-
 }

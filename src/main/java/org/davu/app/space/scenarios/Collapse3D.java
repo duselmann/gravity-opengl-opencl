@@ -51,13 +51,14 @@ public class Collapse3D extends Particles {
         		pos.set(x,y,z);
         	} while( pos.lengthSquared() > maxRadiusSqrd);
 
-        	manager.addVertex(pos);
+            manager.addVertex(pos);
 
             velBuffer.put((float)Math.random()*velBase-velBase/2)
             .put((float)Math.random()*velBase-velBase/2)
             .put((float)Math.random()*velBase-velBase/2);
             velBuffer.put(pos.length()/250); // mass
         }
+
         velBuffer.flip();
         velocities = velBuffer;
 	}
@@ -66,5 +67,4 @@ public class Collapse3D extends Particles {
 	public FloatBuffer  initVelocities(VaoVboManager manager) {
     	return velocities;
 	}
-
 }

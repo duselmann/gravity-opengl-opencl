@@ -27,6 +27,8 @@ public class DarkEnergyIdeal extends Particles {
     @Override
 	public void makeVertices(VaoVboManager manager) {
 		log.info("init particle data");
+
+        // set the core locations in the first two mass registers
     	Vector3f pos = new Vector3f();
         float maxRadius = 900;
         for(int b=0; b<getParticleCount(); b++) {
@@ -36,6 +38,7 @@ public class DarkEnergyIdeal extends Particles {
             aa = (float)(Math.random()*Math.PI*2);
             x1 = (Math.cos(aa));
             y1 = (Math.sin(aa));
+    		// get position of particle
 
             pos.x = r*x1;
             pos.y = r*y1;
@@ -65,8 +68,8 @@ public class DarkEnergyIdeal extends Particles {
 
             addDarkEnergy(pos, velv);
 
-            velBuffer.put(velv.x).put(velv.y).put(velv.z);
-            velBuffer.put((float)(600*massBase*Math.random())); // mass
+            velBuffer.put(velv.x).put(velv.y).put(velv.z);  // register particle velocity
+            velBuffer.put((float)(600*massBase*Math.random())); // mass of each particle
         }
     	velBuffer.flip();
     	return velBuffer;
@@ -77,4 +80,3 @@ public class DarkEnergyIdeal extends Particles {
 		velv.add(pos);
 	}
 }
-// Near as I can tell, the $100 discount promotion for opening the account was not applied

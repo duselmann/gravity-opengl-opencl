@@ -19,7 +19,7 @@ public class Andromeda extends Galaxies2 {
 		log.info("Scenario Initialization");
 
 
-		setAlpha(.5f); // .2
+		setAlpha(.5f);
 		ratio = 0.7f;
         Vector3f andromedaVel = new Vector3f(0,0,0);
         Vector3f milkywayVel = new Vector3f(9f,0,-12);
@@ -85,16 +85,16 @@ public class Andromeda extends Galaxies2 {
             float innerVol = r*r*r;                      // volume of dark matter
             float darkMass = dmMass * innerVol/dmVolume; // inner dark matter mass
             float vr = velBase * Math.sqrt(darkMass/pos.length()); // radial velocity magnitude
-            Vector3f darkVel = new Vector3f();
-        	velNormal.cross(pos, darkVel).normalize().mul(vr);     // radial velocity vector
+            Vector3f velDark = new Vector3f();
+        	velNormal.cross(pos, velDark).normalize().mul(vr);     // radial velocity vector
 
         	// calculate the velocity with respect to the galaxy center
     		r  = pos.length();           // distance from galaxy center
             vr = velBase * Math.sqrt(coreMass[leftRight]/r); // galactic radial velocity magnitude
             Vector3f velv = new Vector3f();
-            pos.cross(velNormal, velv).normalize().mul(vr);  // galactic radial velocity vector
+            pos.cross(velNormal, velv).normalize().mul(vr);  // galactic radial velocity vector from stars
 
-        	velv.add(darkVel); // add in the dark velocity
+        	velv.add(velDark); // add in the dark velocity
         	velv.add(coreVel[leftRight]); // add in galactic velocity
 
             velBuffer.put(velv.x).put(velv.y).put(velv.z);  // register particle velocity
