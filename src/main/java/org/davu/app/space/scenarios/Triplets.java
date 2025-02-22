@@ -57,6 +57,9 @@ public class Triplets extends Particles {
     @Override
 	public void makeVertices(VaoVboManager manager) {
 		log.info("init particle data");
+
+		glasses3D.setGlasses();
+
         velBase  = 1f;
 
         FloatBuffer velBuffer = BufferUtils.createFloatBuffer(4*getParticleCount());

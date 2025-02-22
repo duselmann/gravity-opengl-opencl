@@ -16,15 +16,15 @@ import org.lwjgl.BufferUtils;
 public class SpiralRibbon extends Particles {
 	private static final Logger log = LogManager.getLogger(SpiralRibbon.class);
 
-	int NumParticles = 4_096*16; // 2x the particles of my original
+	int NumParticles = 1_024*32;
 
 	private FloatBuffer velBuffer;
 
 
 	public SpiralRibbon() {
 		setParticleCount(NumParticles);
-		setMassiveCount(NumParticles/6);
-		setAlpha(0.8f);
+		setMassiveCount(NumParticles);
+		setAlpha(0.5f);
 	}
 	@Override
 	public void setGlasses(Glasses3D glasses) {
