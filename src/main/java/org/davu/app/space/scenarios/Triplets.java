@@ -31,7 +31,7 @@ public class Triplets extends Particles {
 		setParticleCount(NumParticles);
 		setMassiveCount(NumParticles);
 
-		setAlpha(.75f);
+		setAlpha(.5f);
 
 //      Vector3f[] coreNormal = new Vector3f[] {new Vector3f(0,0,1), new Vector3f(1,0,0), new Vector3f(0,1,0)};
         coreNormal = new Vector3f[] {new Vector3f(0,0,1f) /*middle*/, new Vector3f(0,1,0) /*left*/, new Vector3f(1,0,0) /*right*/};

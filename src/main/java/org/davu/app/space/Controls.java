@@ -44,35 +44,40 @@ public class Controls {
     	camera.beginAcceleration();
         float rotation = 0.0f;
 
+        float multiplier = 1f;
+    	if (window.isRightMouseDown()) {
+        	multiplier = 4.0f;
+    	}
+
     	if ( !window.isKeyDown(GLFW_KEY_LEFT_CONTROL) ) {
 
 	    	if (window.isKeyDown(GLFW_KEY_LEFT_SHIFT)) {
 	            if (window.isKeyDown(GLFW_KEY_W)) {
-	            	camera.up(-1.0f);
+	            	camera.up(-1.0f*multiplier);
 	            }
 	            if (window.isKeyDown(GLFW_KEY_S)) {
-	            	camera.up(+1.0f);
+	            	camera.up(+1.0f*multiplier);
 	            }
 	    	} else {
 		        if (window.isKeyDown(GLFW_KEY_W)) {
-		        	camera.forward(+1.0f);
+		        	camera.forward(+1.0f*multiplier);
 		        }
 		        if (window.isKeyDown(GLFW_KEY_S)) {
-		        	camera.forward(-1.0f);
+		        	camera.forward(-1.0f*multiplier);
 		        }
 	    	}
 
 	        if (window.isKeyDown(GLFW_KEY_D)) {
-	        	camera.right(-1.0f);
+	        	camera.right(-1.0f*multiplier);
 	        }
 	        if (window.isKeyDown(GLFW_KEY_A)) {
-	        	camera.right(+1.0f);
+	        	camera.right(+1.0f*multiplier);
 	        }
 	        if (window.isKeyDown(GLFW_KEY_R)) {
-	        	camera.up(-1.0f);
+	        	camera.up(-1.0f*multiplier);
 	        }
 	        if (window.isKeyDown(GLFW_KEY_F)) {
-	        	camera.up(+1.0f);
+	        	camera.up(+1.0f*multiplier);
 	        }
 
 	        if (window.isKeyDown(GLFW_KEY_Q)) {
@@ -83,9 +88,6 @@ public class Controls {
 	        }
     	}
 
-    	if (window.isRightMouseDown()) {
-        	camera.forward(+3.0f);
-    	}
         if (window.isLeftMouseDown()) {
         	camera.changeDirection(window.getMouseX(), window.getMouseY(), rotation);
         } else {
