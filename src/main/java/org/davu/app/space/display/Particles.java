@@ -9,6 +9,7 @@ import java.nio.FloatBuffer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.davu.opencl.utils.ScenarioCollection;
 import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -57,6 +58,8 @@ public class Particles implements VaoVboClient {
 
 	public Particles() {
 		log.info("Creating particles");
+
+		ScenarioCollection.registerScenario(this.getClass());
 
 		setParticleCount(NumParticles);
 

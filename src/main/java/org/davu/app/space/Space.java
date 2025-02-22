@@ -141,7 +141,7 @@ public class Space implements Runnable {
 		cli.parseArgs(args);
 
 
-		String scenario = "Galaxies2b";
+		String scenario = "Galaxies2b"; // DEFAULT SCENARIO
 		if (args.length>0 && !args[0].contains("-")) {
 			// handle legacy args
 			scenario = args[0];
@@ -149,6 +149,7 @@ public class Space implements Runnable {
 
 		} else {
 			// handle parsed args
+			cli.list();
 
 			if (cli.hasScenario()) {
 				scenario = cli.getScenario();

@@ -28,10 +28,12 @@ public class Galactic extends Particles {
 	public void makeVertices(VaoVboManager manager) {
 		log.info("init particle data");
 
+        Vector3f blackHole = new Vector3f(0,0,900);
+        manager.addVertex(blackHole);
 
         float maxRadius = 900;
         Vector3f pos = new Vector3f();
-        for(int b=0; b<getParticleCount(); b++) {
+        for(int b=1; b<getParticleCount(); b++) {
             float r,aa,x1,y1;
             r=aa=x1=y1=1;
             r = Math.sqrt(maxRadius *maxRadius * (float)Math.random() + 100);
@@ -57,8 +59,10 @@ public class Galactic extends Particles {
         float density = massBase*getParticleCount()/(maxRadius*maxRadius*maxRadius);
     	FloatBuffer velBuffer   = BufferUtils.createFloatBuffer(4*getParticleCount());
 
+        velBuffer.put(0).put(0).put(-4);
+        velBuffer.put(1000); // black hole mass
 
-    	for (int v=0; v<getParticleCount(); v++) {
+    	for (int v=1; v<getParticleCount(); v++) {
     		Vector3f pos = manager.getVertex(this, v);
             if (v < 6) System.out.println(pos);
     		float r  = pos.length();
