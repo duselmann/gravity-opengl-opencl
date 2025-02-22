@@ -13,6 +13,7 @@ import org.davu.app.space.display.Particles;
 import org.davu.app.space.display.VaoVboManager;
 import org.davu.app.space.display.ViewMatrix;
 import org.davu.app.space.display.Window;
+import org.davu.opencl.utils.CliManager;
 import org.lwjgl.opengl.GL;
 
 import java.io.IOException;
@@ -21,8 +22,11 @@ import java.io.IOException;
 public class Space implements Runnable {
 	private long lastTime = System.nanoTime();
 
-	private int width = 5100;
-	private int height = 1450;
+	private static int DEFAULT_WIDTH = 5100;
+	private static int DEFAULT_HEIGHT= 1450;
+
+	private int width = DEFAULT_WIDTH;
+	private int height = DEFAULT_HEIGHT;
 	private Window window;
 	private Controls controls;
 	private ViewMatrix view;
@@ -32,8 +36,13 @@ public class Space implements Runnable {
     private GravityCL gravity;
 	protected Particles particles;
 
-
 	public Space(String scenario) {
+		this(scenario, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+	}
+
+	public Space(String scenario, int width, int height) {
+		this.width = width;
+		this.height = height;
         view = new ViewMatrix(width, height);
         glasses3d = new Glasses3D(view);
 		particles = new ScenarioManager().build(scenario, glasses3d);
@@ -128,11 +137,31 @@ public class Space implements Runnable {
 	}
 
 	public static void main(String[] args) {
+		CliManager cli = new CliManager();
+		cli.parseArgs(args);
+
+
 		String scenario = "Galaxies2b";
-		if (args.length>0) {
+		if (args.length>0 && !args[0].contains("-")) {
+			// handle legacy args
 			scenario = args[0];
+			new Space(scenario).run();
+
+		} else {
+			// handle parsed args
+
+			if (cli.hasScenario()) {
+				scenario = cli.getScenario();
+			}
+
+			if (cli.hasWidth() && cli.hasHeight()) {
+				int width = cli.getWidth();
+				int height = cli.getHeight();
+				new Space(scenario, width, height).run();
+			} else {
+				new Space(scenario).run();
+			}
 		}
-	    new Space(scenario).run();
 	}
 
 }
