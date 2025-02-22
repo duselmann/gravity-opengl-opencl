@@ -16,6 +16,7 @@ public class Controls {
 	private Particles particles;
 	private GravityCL gravity;
 	private Glasses3D glasses3d;
+	private long wait3D;
 
 	public Controls(Window window, ViewMatrix camera, Particles particles, Glasses3D glasses) {
 		this.camera = camera;
@@ -96,7 +97,10 @@ public class Controls {
 
         if (window.isKeyDown(GLFW_KEY_LEFT_CONTROL)) {
             if (window.isKeyDown(GLFW_KEY_3)) {
-            	glasses3d.setGlasses();
+            	if (System.currentTimeMillis() > wait3D) {
+            		glasses3d.setGlasses();
+            		wait3D = System.currentTimeMillis() + 1000;
+            	}
             }
 
             if (window.isKeyDown(GLFW_KEY_A)) {
