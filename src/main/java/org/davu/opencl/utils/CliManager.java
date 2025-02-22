@@ -88,4 +88,10 @@ public class CliManager {
 	public int getHeight() {
 		return Integer.valueOf( params.getOptionValue(height) );
 	}
+
+	public void list() {
+		if ( ! params.hasOption(list)) {
+			return;
+		}
+	}
 }
