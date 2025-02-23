@@ -14,8 +14,7 @@ public class HoagsGalaxy extends Galaxy {
 		super();
 		log.info("Scenario Initialization");
 
-		coreMassBase  = CORE_MASS_BASE;
-        coreMass = new float[] {CORE_MASS_BASE, CORE_MASS_BASE};
+        coreMass = new float[] {CORE_MASS_BASE, CORE_MASS_BASE*2};
         bulgeRatio = 0;
 	}
 

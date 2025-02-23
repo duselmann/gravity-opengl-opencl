@@ -63,7 +63,8 @@ public class Galaxy extends Galaxies {
         velBuffer.put(coreVel2.x).put(coreVel2.y).put(coreVel2.z);
         velBuffer.put(coreMass[1]); // mass
 
-        float starMass = getParticleCount()*massBase*1;
+        float starMass = getParticleCount()*massBase*2.1f; // estimated internal mass from dust/stars
+
         for(int b=2; b<getParticleCount(); b++) {
             int leftRight = Math.random()<ratio ?0 :1;
             float r,aa,a1,a2;
