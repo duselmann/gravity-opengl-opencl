@@ -6,12 +6,12 @@ import org.apache.logging.log4j.Logger;
 import org.joml.Vector3f;
 
 
-public class PinwheelGalaxy extends Galaxy {
-	private static final Logger log = LogManager.getLogger(PinwheelGalaxy.class);
+public class CartwheelGalaxy extends Galaxy {
+	private static final Logger log = LogManager.getLogger(CartwheelGalaxy.class);
 
 	private final float CORE_MASS_BASE = 5e4f;
 
-	public PinwheelGalaxy() {
+	public CartwheelGalaxy() {
 		super();
 		log.info("Scenario Initialization");
 
@@ -23,6 +23,7 @@ public class PinwheelGalaxy extends Galaxy {
         coreVel = new Vector3f[] {coreVel1,coreVel2};
 
         coreDist = new Vector3f(0f, 0f, 500f);
+        bulgeRatio = 0;
 	}
 
 }

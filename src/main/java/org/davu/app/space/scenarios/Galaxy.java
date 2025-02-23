@@ -16,23 +16,24 @@ public class Galaxy extends Galaxies {
 
 	private final float MAX_RADIUS = 400;
 	private final float CORE_MASS_BASE = 5e4f;
+	protected float bulgeRatio = 0.15f;
 
 	public Galaxy() {
 		log.info("Scenario Initialization");
 
 		coreMassBase  = CORE_MASS_BASE;
-        coreMass = new float[] {CORE_MASS_BASE, 0.1f};
+        coreMass = new float[] {CORE_MASS_BASE, 1f};
     	coreDist = new Vector3f(0,0,0);
 	    NumParticles = 1_048_576/16;
 		setParticleCount(NumParticles);
 		setMassiveCount(NumParticles);
 		setAlpha(.5f);
-		ratio = 1f;
+		ratio = 1f; // all in one galaxy
         Vector3f coreVel1 = new Vector3f(0,0,0);
         Vector3f coreVel2 = new Vector3f(0,0,0);
         coreVel = new Vector3f[] {coreVel1,coreVel2};
         maxRadius = new float[] {MAX_RADIUS, MAX_RADIUS};
-        massBase = 1f;
+        massBase = 1.5f;
 	}
     @Override
 	public void initDarkMater() {
@@ -49,9 +50,6 @@ public class Galaxy extends Galaxies {
         velBase  = 1f;
         // set the core locations in the first two mass registers
         Vector3f pos = new Vector3f();
-        pos.x = -coreDist.x;
-        pos.y = -coreDist.y;
-        pos.z = -coreDist.z;
         manager.addVertex(pos);
         manager.addVertex(coreDist);
 
@@ -70,20 +68,33 @@ public class Galaxy extends Galaxies {
             int leftRight = Math.random()<ratio ?0 :1;
             float r,aa,a1,a2;
             float galaxyArea = maxRadius[leftRight]*maxRadius[leftRight]*4;
-            r = randomDistanceFromCore(leftRight);
-            aa = (float)(Math.random()*Math.PI*2);
-            a1 = (Math.cos(aa));
-            a2 = (Math.sin(aa));
-    		// get position of particle
+            aa = (float)(Math.random()*Math.PI*2); // disk angle around
+            a1 = Math.cos(aa);                   // y-ish angle part
+            a2 = Math.sin(aa);                   // x-ish  angle part
 
-            if (leftRight==1) {
-            	pos.set(((float)Math.random()*10f-5f)*2f, // x
-            			r*a2,   // y
-            			r*a1);  // z
+            if (Math.random()< bulgeRatio) { // core bulge
+            	r = 45f * (float)Math.random() + 15; // bulge radius
+                float ba = (float)(Math.random()*Math.PI*2); // bulge angle around
+//                      x = r * sin(polar) * cos(alpha)
+//                		y = r * sin(polar) * sin(alpha)
+//                		z = r * cos(polar)
+            	pos.set( r * a2 * Math.cos(ba),
+            			 r * a2 * Math.sin(ba),
+            			 r * a1);
             } else {
-            	pos.set(r*a1,  // x
-            			r*a2,  // y
-            			((float)Math.random()*10f-5f)*2f); // z
+            	r = randomDistanceFromCore(leftRight);
+        		// get position of particle
+
+                // for one galaxy place in y-z plane, the other in x-y plane
+                if (leftRight==1) { // y-z
+                	pos.set(((float)Math.random()*10f-5f)*2f,  // x, disk thickness
+                			r*a2,   // y
+                			r*a1);  // z
+                } else { // x-y
+                	pos.set(r*a1,  // x
+                			r*a2,  // y
+                			((float)Math.random()*10f-5f)*2f); // z, disk thickness
+                }
             }
 
             // normal to that positions galaxy

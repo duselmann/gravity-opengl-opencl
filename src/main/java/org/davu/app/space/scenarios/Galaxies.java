@@ -118,11 +118,11 @@ public class Galaxies extends Particles {
 
 	protected float randomDistanceFromCore(int leftRight) {
 		// first make a fuzzy edge
-		float maxRad = maxRadius[leftRight] * (1f+(float)Math.random()/5f);
+		float maxRad = maxRadius[leftRight] * (1f+(float)Math.random()/5f); // max * fuzzy factor
 		// compute a random distance from core
 		float r = (maxRad * (float)Math.random());
 		// void near core, central core mass represents black hole and surrounding mass
-		// actually, it runs and like better
+		// and, it is visually better
 		r += 50/(1+leftRight);
 
 		return r;
