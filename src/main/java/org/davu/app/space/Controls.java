@@ -109,7 +109,7 @@ public class Controls {
             		particles.setAlpha( Math.min(alpha, 1.0f) );
             	} else if (window.isKeyDown(GLFW_KEY_DOWN)) {
             		float alpha = particles.getAlpha() * 0.995f;
-            		particles.setAlpha( Math.max(alpha, 0.01f) );
+            		particles.setAlpha( Math.max(alpha, 0.005f) );
             	}
             }
             if (window.isKeyDown(GLFW_KEY_D)) {
