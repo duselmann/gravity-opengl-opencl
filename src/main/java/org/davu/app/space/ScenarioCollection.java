@@ -1,4 +1,4 @@
-package org.davu.opencl.utils;
+package org.davu.app.space;
 
 import java.util.HashMap;
 import java.util.LinkedList;

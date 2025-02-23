@@ -9,7 +9,7 @@ import java.nio.FloatBuffer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.davu.opencl.utils.ScenarioCollection;
+import org.davu.app.space.ScenarioCollection;
 import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
