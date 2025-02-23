@@ -70,7 +70,7 @@ public class Galaxy extends Galaxies {
             int leftRight = Math.random()<ratio ?0 :1;
             float r,aa,a1,a2;
             float galaxyArea = maxRadius[leftRight]*maxRadius[leftRight]*4;
-            r = (maxRadius[leftRight] * (float)Math.random() + (50/(1+leftRight)));
+            r = randomDistanceFromCore(leftRight);
             aa = (float)(Math.random()*Math.PI*2);
             a1 = (Math.cos(aa));
             a2 = (Math.sin(aa));

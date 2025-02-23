@@ -67,7 +67,7 @@ public class Galaxies extends Particles {
             int leftRight = Math.random()<ratio ?0 :1;
             float r,aa,a1,a2;
             float galaxyArea = maxRadius[leftRight]*maxRadius[leftRight]*4;
-            r = (maxRadius[leftRight] * (float)Math.random() + (50/(1+leftRight)));
+            r = randomDistanceFromCore(leftRight);
             aa = (float)(Math.random()*Math.PI*2);
             a1 = (Math.cos(aa));
             a2 = (Math.sin(aa));
@@ -115,6 +115,18 @@ public class Galaxies extends Particles {
         velBuffer.flip();
         velocities = velBuffer;
     }
+
+	protected float randomDistanceFromCore(int leftRight) {
+		// first make a fuzzy edge
+		float maxRad = maxRadius[leftRight] * (1f+(float)Math.random()/5f);
+		// compute a random distance from core
+		float r = (maxRad * (float)Math.random());
+		// void near core, central core mass represents black hole and surrounding mass
+		// actually, it runs and like better
+		r += 50/(1+leftRight);
+
+		return r;
+	}
 
     @Override
 	public FloatBuffer  initVelocities(VaoVboManager manager) {
