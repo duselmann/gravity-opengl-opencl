@@ -1,4 +1,4 @@
-package org.davu.opencl.utils;
+package org.davu.app.space;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -17,8 +17,11 @@ public class CliManager {
 	Option help;
 	Option width;
 	Option height;
+	Option top;
+	Option left;
 	Option scenario;
 	Option list;
+	Option delay;
 
 	public CliManager() {
 		intiOptions();
@@ -28,15 +31,28 @@ public class CliManager {
 		Option option;
 		option = help = new Option("?", "help",   false, "Display CLI help. This documentation.");
 		options.addOption(option);
-
-		option = width = new Option("w", "width",  true, "Pixel width of the viewport and window");
-		options.addOption(option);
-		option = height = new Option("h", "height", true, "Pixel height of the viewport and window");
+		option = list = new Option("l", "list",     false, "List all the scenario Class Names.");
 		options.addOption(option);
 
-		option = scenario = new Option("s", "scenario", true, "Initial conditions scenario Class Name");
+		option = width = new Option("w", "width",  true, "Pixel width of the viewport and window.");
+		option.setType(Integer.class);
 		options.addOption(option);
-		option = list = new Option("l", "list",     false, "List all the scenario Class Names");
+		option = height = new Option("h", "height", true, "Pixel height of the viewport and window.");
+		option.setType(Integer.class);
+		options.addOption(option);
+		option = top = new Option("t", "top",  true, "Pixel top for window location.");
+		option.setType(Integer.class);
+		options.addOption(option);
+		option = left = new Option("l", "left", true, "Pixel left window location.");
+		option.setType(Integer.class);
+		options.addOption(option);
+
+		option = delay = new Option("d", "delay", true, "Milliseconds to wait to start compute.");
+		option.setType(Integer.class);
+		options.addOption(option);
+
+		option = scenario = new Option("s", "scenario", true, "Initial conditions scenario Class Name.");
+		option.setType(String.class);
 		options.addOption(option);
 	}
 
@@ -80,13 +96,46 @@ public class CliManager {
 		return params.hasOption(width);
 	}
 	public int getWidth() {
-		return Integer.valueOf( params.getOptionValue(width) );
+		return getInt(width);
 	}
 	public boolean hasHeight() {
 		return params.hasOption(height);
 	}
 	public int getHeight() {
-		return Integer.valueOf( params.getOptionValue(height) );
+		return getInt(height);
+	}
+	public boolean hasTop() {
+		return params.hasOption(top);
+	}
+	public int getTop() {
+		return getInt(top);
+	}
+	public boolean hasLeft() {
+		return params.hasOption(left);
+	}
+	public int getLeft() {
+		return getInt(left);
+	}
+	public boolean hasDelay() {
+		return params.hasOption(delay);
+	}
+	public int getDelay() {
+		return getInt(delay);
+	}
+
+	protected int getInt(Option intOption) {
+		int value = 100;
+		String optionValue = params.getOptionValue(intOption);
+		try {
+			value = Integer.valueOf(optionValue).intValue();
+			if (value < 1) {
+				throw new ParseException("Value may not be negative.");
+			}
+		} catch (Exception e) {
+			System.err.print(intOption.getArgName() + " must be a valid positive integer. `"
+					+ optionValue + "` is not acceptable.");
+		}
+		return value;
 	}
 
 	public void list() {

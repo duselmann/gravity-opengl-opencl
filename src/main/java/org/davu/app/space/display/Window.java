@@ -21,6 +21,8 @@ import org.lwjgl.glfw.GLFWWindowSizeCallback;
 public class Window {
 	private int width;
 	private int height;
+	private int top;
+	private int left;
 	private int fbWidth;
 	private int fbHeight;
 	private long window;
@@ -35,9 +37,11 @@ public class Window {
     private boolean rightMouseDown;
     private boolean leftMouseDown;
 
-    public Window(int width, int height) {
+    public Window(int width, int height, int top, int left) {
 		this.fbWidth  = this.width  = width;
 		this.fbHeight = this.height = height;
+		this.top  = top;
+		this.left = left;
     }
 
 	public Window init() {
@@ -49,7 +53,7 @@ public class Window {
         glfwWindowHint(GLFW_SAMPLES, 1);
 
         window = glfwCreateWindow(width, height, "Universe Symulation", 0L, NULL);
-        glfwSetWindowPos(window, 1, 5);
+        glfwSetWindowPos(window, left, top);
         if (window == NULL) {
             throw new AssertionError("Failed to create the GLFW window");
         }
