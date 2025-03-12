@@ -37,7 +37,7 @@ public class Triplets extends Particles {
         coreNormal = new Vector3f[] {new Vector3f(0,0,1f) /*middle*/, new Vector3f(0,1,0) /*left*/, new Vector3f(1,0,0) /*right*/};
 
         Vector3f coreVel0 = new Vector3f( 0f, 0f,0f);
-        Vector3f coreVel1 = new Vector3f( 1f,-1f,0f);
+        Vector3f coreVel1 = new Vector3f( 1f,-2f,0f);
         Vector3f coreVel2 = new Vector3f( 0f, 4f,0f);
         coreVel = new Vector3f[] {coreVel0,coreVel1,coreVel2};
 //        coreVel = new Vector3f[] {new Vector3f(),new Vector3f(),new Vector3f()};
@@ -149,7 +149,7 @@ public class Triplets extends Particles {
         // TODO always have DM but default low influence
         // init properties - Dark Matter
         dmVolume = 8e9f; //2^30
-        dmMass   = coreMassBase*2*1000;
+        dmMass   = coreMassBase*2*10000;
         dmCenter = new Vector3f();
 	}
 }

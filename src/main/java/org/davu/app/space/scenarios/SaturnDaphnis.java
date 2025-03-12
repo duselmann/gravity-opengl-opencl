@@ -11,28 +11,29 @@ import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
 
-public class Galaxy extends Galaxies {
-	private static final Logger log = LogManager.getLogger(Galaxy.class);
+public class SaturnDaphnis extends Galaxies {
+	private static final Logger log = LogManager.getLogger(SaturnDaphnis.class);
 
-	protected final float MAX_RADIUS = 400;
-	protected final float CORE_MASS_BASE = 5e4f;
+	protected final float MAX_RADIUS = 1000;
+	protected final float CORE_MASS_BASE = 6e6f;
 	protected float bulgeRatio = 0.15f;
+	protected float saturn = 250;
 
-	public Galaxy() {
+	public SaturnDaphnis() {
 		log.info("Scenario Initialization");
 
 		coreMassBase  = CORE_MASS_BASE;
-        coreMass = new float[] {CORE_MASS_BASE, 1f};
-    	coreDist = new Vector3f(0,0,0);
-	    NumParticles = 1_048_576/16;
+        coreMass = new float[] {CORE_MASS_BASE, 100};
+    	coreDist = new Vector3f(0,500,-10);
+	    NumParticles = 1_048_576*16;
 		setParticleCount(NumParticles);
-		setMassiveCount(NumParticles);
-		setAlpha(.5f);
+		setMassiveCount(2);
+		setAlpha(.02f);
 		ratio = 1f; // all in one galaxy
         Vector3f coreVel1 = new Vector3f(0,0,0);
-        Vector3f coreVel2 = new Vector3f(0,0,0);
+        Vector3f coreVel2 = new Vector3f(110,0,0);
         coreVel = new Vector3f[] {coreVel1,coreVel2};
-        maxRadius = new float[] {MAX_RADIUS, MAX_RADIUS};
+        maxRadius = new float[] {MAX_RADIUS, 1};
         massBase = 1.5f;
 	}
 
@@ -41,7 +42,7 @@ public class Galaxy extends Galaxies {
         // TODO always have DM but default low influence
         // init properties - Dark Matter
 		dmVolume = (float) java.lang.Math.pow(MAX_RADIUS * 1.5, 3);
-        dmMass   = CORE_MASS_BASE * 20f;
+        dmMass   = 1;
         dmCenter = new Vector3f();
 	}
 
@@ -75,29 +76,24 @@ public class Galaxy extends Galaxies {
             a1 = Math.cos(aa);                   // y-ish angle part
             a2 = Math.sin(aa);                   // x-ish  angle part
 
-            if (Math.random()< bulgeRatio) { // core bulge
-            	r = 45f * (float)Math.random() + 15; // bulge radius
-                float ba = (float)(Math.random()*Math.PI*2); // bulge angle around
-//                      x = r * sin(polar) * cos(alpha)
-//                		y = r * sin(polar) * sin(alpha)
-//                		z = r * cos(polar)
-            	pos.set( r * a2 * Math.cos(ba),
-            			 r * a2 * Math.sin(ba),
-            			 r * a1);
-            } else {
-            	r = randomDistanceFromCore(leftRight);
-        		// get position of particle
+    		// first make a fuzzy edge
+    		float maxRad = (maxRadius[leftRight]-saturn) * (1f+(float)Math.random()/5f); // max * fuzzy factor
+    		// compute a random distance from core
+    		r = (maxRad * (float)Math.random());
+    		// void near core, central core mass represents black hole and surrounding mass
+    		// and, it is visually better
+    		r += saturn/(1+leftRight);
+    		// get position of particle
 
-                // for one galaxy place in y-z plane, the other in x-y plane
-                if (leftRight==1) { // y-z
-                	pos.set(((float)Math.random()*10f-5f)*2f,  // x, disk thickness
-                			r*a2,   // y
-                			r*a1);  // z
-                } else { // x-y
-                	pos.set(r*a1,  // x
-                			r*a2,  // y
-                			((float)Math.random()*10f-5f)*2f); // z, disk thickness
-                }
+            // for one galaxy place in y-z plane, the other in x-y plane
+            if (leftRight==1) { // y-z
+            	pos.set(((float)Math.random()*10f-5f)*2f,  // x, disk thickness
+            			r*a2,   // y
+            			r*a1);  // z
+            } else { // x-y
+            	pos.set(r*a1,  // x
+            			r*a2,  // y
+            			((float)Math.random()*10f-5f)*2f); // z, disk thickness
             }
 
             // normal to that positions galaxy
@@ -108,11 +104,7 @@ public class Galaxy extends Galaxies {
 
         	// calculate the velocity with respect to the galaxy center
             r  = pos.length();           // distance from galaxy center
-            float innerVol = r*r*r;                      // volume of dark matter
-            float darkMass = dmMass * innerVol/dmVolume; // inner dark matter mass
-            float innerArea = r*r;                      // inner disc volume of star matter
-            float starsMass = starMass * innerArea/galaxyArea; // inner dark matter mass
-            float totalMass = darkMass + starsMass + coreMass[leftRight];
+            float totalMass = coreMass[leftRight];
             vr = velBase * Math.sqrt(totalMass/r); // galactic radial velocity magnitude
             Vector3f velv = new Vector3f();
             pos.cross(velNormal, velv).normalize().mul(vr);  // galactic radial velocity vector from stars
@@ -122,7 +114,7 @@ public class Galaxy extends Galaxies {
             velBuffer.put(velv.x).put(velv.y).put(velv.z);  // register particle velocity
             velBuffer.put((float)(massBase*Math.random())); // mass of each particle
 
-            leftRight = leftRight * 2 - 1;
+//            leftRight = leftRight * 2 - 1;
             pos.x = leftRight*coreDist.x + pos.x;
             pos.y = leftRight*coreDist.y + pos.y;
             pos.z = leftRight*coreDist.z + pos.z;
