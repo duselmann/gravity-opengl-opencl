@@ -14,24 +14,37 @@ import org.lwjgl.BufferUtils;
 public class SaturnDaphnis extends Galaxies {
 	private static final Logger log = LogManager.getLogger(SaturnDaphnis.class);
 
-	protected final float MAX_RADIUS = 1000;
-	protected final float CORE_MASS_BASE = 6e6f;
-	protected float bulgeRatio = 0.15f;
-	protected float saturn = 250;
+	protected final float MAX_RADIUS = 1800;     // Rings extent
+	protected final float CORE_MASS_BASE = 6e6f; // Saturn mass
+	protected float saturnRadius = 666;
+	protected float moonMass = 10;
+
+	// 1336 Pan
+	// 1365 Daphnis
+	// 1377 Atlas
+	// 1394 Prometheus
+	// 1417 Pandora
+	// 1515 Janus & Epimetheus
 
 	public SaturnDaphnis() {
 		log.info("Scenario Initialization");
 
 		coreMassBase  = CORE_MASS_BASE;
-        coreMass = new float[] {CORE_MASS_BASE, 100};
-    	coreDist = new Vector3f(0,500,-10);
-	    NumParticles = 1_048_576*16;
-		setParticleCount(NumParticles);
-		setMassiveCount(2);
-		setAlpha(.02f);
-		ratio = 1f; // all in one galaxy
-        Vector3f coreVel1 = new Vector3f(0,0,0);
-        Vector3f coreVel2 = new Vector3f(110,0,0);
+        coreMass = new float[] {CORE_MASS_BASE, moonMass}; // Saturn and Daphanis
+	    NumParticles = 1_048_576*8;
+		setParticleCount(NumParticles);                    // Ring dust particles
+		setMassiveCount(2);                                // Shepherd moons + Saturn
+		setAlpha(.04f);                                    // Ring base particle brightness
+		ratio = 1f; 									   // all particles around Saturn
+        Vector3f coreVel1 = new Vector3f(0,0,0);           // Saturn has no movement
+
+        //Vector3f coreVel2 = new Vector3f(110,0,0); // good at 500 test particle
+
+        // Daphanis settings
+    	coreDist = new Vector3f(0,1365,-10);
+        Vector3f coreVel2 = new Vector3f(67,0,0);
+
+
         coreVel = new Vector3f[] {coreVel1,coreVel2};
         maxRadius = new float[] {MAX_RADIUS, 1};
         massBase = 1.5f;
@@ -77,23 +90,22 @@ public class SaturnDaphnis extends Galaxies {
             a2 = Math.sin(aa);                   // x-ish  angle part
 
     		// first make a fuzzy edge
-    		float maxRad = (maxRadius[leftRight]-saturn) * (1f+(float)Math.random()/5f); // max * fuzzy factor
+    		float maxRad = (maxRadius[leftRight]-saturnRadius) * (1f+(float)Math.random()/5f); // max * fuzzy factor
     		// compute a random distance from core
     		r = (maxRad * (float)Math.random());
     		// void near core, central core mass represents black hole and surrounding mass
     		// and, it is visually better
-    		r += saturn/(1+leftRight);
+    		r += saturnRadius/(1+leftRight);
     		// get position of particle
-
             // for one galaxy place in y-z plane, the other in x-y plane
             if (leftRight==1) { // y-z
-            	pos.set(((float)Math.random()*10f-5f)*2f,  // x, disk thickness
+            	pos.set(((float)Math.random()*10f-5f)*.2f,  // x, disk thickness
             			r*a2,   // y
             			r*a1);  // z
             } else { // x-y
             	pos.set(r*a1,  // x
             			r*a2,  // y
-            			((float)Math.random()*10f-5f)*2f); // z, disk thickness
+            			((float)Math.random()*10f-5f)*.2f); // z, disk thickness
             }
 
             // normal to that positions galaxy
@@ -108,6 +120,9 @@ public class SaturnDaphnis extends Galaxies {
             vr = velBase * Math.sqrt(totalMass/r); // galactic radial velocity magnitude
             Vector3f velv = new Vector3f();
             pos.cross(velNormal, velv).normalize().mul(vr);  // galactic radial velocity vector from stars
+//        	if (r > 1336 && r < 1337) {
+//        		System.out.println(r + ": " + velv.length());
+//        	}
 
         	velv.add(coreVel[leftRight]); // add in galactic velocity
 
