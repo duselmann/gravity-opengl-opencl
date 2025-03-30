@@ -23,6 +23,11 @@ public class Galaxies extends Gravity {
         Galaxies gravity = new Galaxies();
         gravity.createWindow();
         gravity.setConditions();
+        try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
         gravity.compute();
     }
 

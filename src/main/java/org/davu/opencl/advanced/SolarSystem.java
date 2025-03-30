@@ -16,7 +16,7 @@ public class SolarSystem extends Gravity {
 
 
     @Override
-    public  void displayCallBack() {
+    public void displayCallBack() {
         displayCanavs.setRadiusCallBack(v -> (float)(v.x*(v.z+500)/400));
     }
 

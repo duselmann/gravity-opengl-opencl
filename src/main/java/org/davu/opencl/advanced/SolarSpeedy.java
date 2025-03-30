@@ -2,12 +2,16 @@
 package org.davu.opencl.advanced;
 
 public class SolarSpeedy extends SolarSystem {
+
     public static void main(String[] args) throws Exception {
         SolarSpeedy gravity = new SolarSpeedy();
         gravity.createWindow();
         gravity.compute();
     }
+
+
     @Override
+
     public void initBodies(float[] bodies, float[] velocity) {
         super.initBodies(bodies, velocity);
         displayCanavs._3D = true;

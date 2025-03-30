@@ -26,6 +26,7 @@ public class GalaxyArms extends Galaxies {
 //        setNoDarkMatterSpeedDiff();
 //        setNoDarkMatterUnstable();
     }
+	
     public void setNoDarkMatterSpeedDiff() { // radial speed diff
         super.setConditions();
         isDarkMatter = false;
@@ -38,6 +39,7 @@ public class GalaxyArms extends Galaxies {
         displayCanavs._3D = false;
         iters = 20;
     }
+	
     public void setNoDarkMatterUnstable() { // radial speed diff
         super.setConditions();
         isDarkMatter = false;
@@ -50,6 +52,7 @@ public class GalaxyArms extends Galaxies {
         displayCanavs._3D = false;
         iters = 20;
     }
+	
     public void setWithDarkMatter() {
         super.setConditions();
         kernelFunc = "gravityDarkMatter";

@@ -22,10 +22,10 @@ public class Explosive2 extends Gravity {
 
     @Override
     public void initBodies(float[] bodies, float[] velocity) {
-        iters = 20;
+        iters    = 20;
         massBase = .05f;
-        velBase = 59f;
-        dt = 0.5f;
+        velBase  = 59f;
+        dt       = 0.5f;
         displayCanavs._3D = true;
         float maxRadius = 25;
         Random rand = new Random();

@@ -29,8 +29,10 @@ public class Explosive extends Gravity {
         displayCanavs._3D = true;
         float maxRadius = 25;
         Random rand = new Random();
+
         double maxMagnitude = 0;
         double minMagnitude = 100;
+
         for(int b=0; b<numBodies; b++) {
             boolean generate = true;
             Vector pos = new Vector();

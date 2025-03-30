@@ -24,6 +24,7 @@ public class GalaxiesDarkMatterVar extends GalaxiesDarkMatter {
 //        setAngleDarkMatter();
 //        setAngle30(); // no dark matter
     }
+	
     public void setLotsDarkMatter() {
         super.setConditions();
         dmCenter = new float[] {0,0,0,coreMass*10};
@@ -35,6 +36,7 @@ public class GalaxiesDarkMatterVar extends GalaxiesDarkMatter {
         speedBoost = 1.15f;
         coreVel  = new Vector(0,2);
     }
+	
     public void setLittleDarkMatter() {
         dmCenter = new float[] {0,0,0,coreMass};
         int dmRadius1 = 600;
@@ -47,6 +49,7 @@ public class GalaxiesDarkMatterVar extends GalaxiesDarkMatter {
         coreVel  = new Vector(0,1.25);
         angle2   = new Vector(0,70);
     }
+	
     public void setMediumDarkMatter() {
         dmCenter = new float[] {0,0,0,coreMass*5};
         int dmRadius1 = 600;
@@ -59,6 +62,7 @@ public class GalaxiesDarkMatterVar extends GalaxiesDarkMatter {
         coreVel  = new Vector(0,2);
         angle2   = new Vector(0,70);
     }
+	
     public void setAngleDarkMatter() {
         dmCenter = new float[] {0,0,0,coreMass*7};
         int dmRadius1 = 600;
@@ -72,6 +76,7 @@ public class GalaxiesDarkMatterVar extends GalaxiesDarkMatter {
         angle1   = new Vector(30);
         angle2   = new Vector(0,30);
     }
+	
     public void setAngle30() {
         dmCenter = new float[] {0,0,0,0};
         int dmRadius1 = 600;
