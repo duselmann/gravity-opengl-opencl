@@ -42,7 +42,7 @@ public class SaturnDaphnis extends Galaxies {
 
         // Daphanis settings
     	coreDist = new Vector3f(0,1365,-10);
-        Vector3f coreVel2 = new Vector3f(67,0,0);
+        Vector3f coreVel2 = new Vector3f(66.33f,0,0);
 
 
         coreVel = new Vector3f[] {coreVel1,coreVel2};
@@ -120,7 +120,7 @@ public class SaturnDaphnis extends Galaxies {
             vr = velBase * Math.sqrt(totalMass/r); // galactic radial velocity magnitude
             Vector3f velv = new Vector3f();
             pos.cross(velNormal, velv).normalize().mul(vr);  // galactic radial velocity vector from stars
-//        	if (r > 1336 && r < 1337) {
+//        	if (r > 1364 && r < 1366) {
 //        		System.out.println(r + ": " + velv.length());
 //        	}
 
